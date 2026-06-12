@@ -3,6 +3,7 @@ import { View, ScrollView } from '@tarojs/components';
 import Taro from '@tarojs/taro';
 import { useRouter } from '@tarojs/taro';
 import Avatar from '@/components/Avatar';
+import { useApp } from '@/store/AppContext';
 import { mockCandidates } from '@/data/candidates';
 import type { Candidate } from '@/types';
 import classnames from 'classnames';
@@ -11,14 +12,15 @@ import styles from './index.module.scss';
 const CandidateDetailPage: React.FC = () => {
   const router = useRouter();
   const candidateId = router.params.id || 'cand001';
+  const { getStoreChatId, currentStoreId } = useApp();
   const [candidate] = useState<Candidate>(
     mockCandidates.find((c) => c.id === candidateId) || mockCandidates[0]
   );
 
   const handleChat = () => {
-    console.log('[CandidateDetail] 发起聊天:', candidate.id);
+    const chatId = getStoreChatId(currentStoreId);
     Taro.navigateTo({
-      url: `/pages/chat-detail/index?id=${candidate.id}&name=${encodeURIComponent(candidate.name)}`,
+      url: `/pages/chat-detail/index?id=${chatId}&name=${encodeURIComponent(candidate.name)}&storeId=${chatId}`,
     });
   };
 

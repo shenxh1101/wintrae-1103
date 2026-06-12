@@ -26,6 +26,7 @@ export const mockJobs: Job[] = [
     isFavorite: false,
     publishedAtValue: Date.now() - 1800000,
     status: 'active',
+    storeId: 'store_shunfeng',
   },
   {
     id: 'job001',
@@ -79,6 +80,7 @@ export const mockJobs: Job[] = [
     isFavorite: false,
     publishedAtValue: Date.now() - 3600000,
     status: 'active',
+    storeId: 'store_meituan',
   },
   {
     id: 'job003',
@@ -105,6 +107,7 @@ export const mockJobs: Job[] = [
     isFavorite: false,
     publishedAtValue: Date.now() - 10800000,
     status: 'active',
+    storeId: 'store_quanji',
   },
   {
     id: 'job009',
@@ -131,6 +134,7 @@ export const mockJobs: Job[] = [
     isFavorite: false,
     publishedAtValue: Date.now() - 14400000,
     status: 'active',
+    storeId: 'store_wells',
   },
   {
     id: 'job004',
@@ -157,6 +161,7 @@ export const mockJobs: Job[] = [
     isFavorite: false,
     publishedAtValue: Date.now() - 18000000,
     status: 'active',
+    storeId: 'store_meili',
   },
   {
     id: 'job008',
@@ -183,6 +188,7 @@ export const mockJobs: Job[] = [
     isFavorite: false,
     publishedAtValue: Date.now() - 21600000,
     status: 'active',
+    storeId: 'store_waipojia',
   },
   {
     id: 'job002',
@@ -209,6 +215,7 @@ export const mockJobs: Job[] = [
     isFavorite: true,
     publishedAtValue: Date.now() - 86400000,
     status: 'active',
+    storeId: 'store_haidilao',
   },
   {
     id: 'job010',
@@ -235,6 +242,7 @@ export const mockJobs: Job[] = [
     isFavorite: false,
     publishedAtValue: Date.now() - 172800000,
     status: 'active',
+    storeId: 'store_vanke',
   },
   {
     id: 'job006',
@@ -261,6 +269,7 @@ export const mockJobs: Job[] = [
     isFavorite: true,
     publishedAtValue: Date.now() - 259200000,
     status: 'active',
+    storeId: 'store_yonghui',
   },
 ];
 

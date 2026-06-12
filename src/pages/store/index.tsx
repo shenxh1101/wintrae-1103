@@ -59,14 +59,6 @@ const StorePage: React.FC = () => {
 
   const storeJobIds = useMemo(() => new Set(storeJobs.map((j) => j.id)), [storeJobs]);
 
-  const jobAppCounts = useMemo(() => {
-    const counts: Record<string, number> = {};
-    storeApplications.forEach((a) => {
-      counts[a.jobId] = (counts[a.jobId] || 0) + 1;
-    });
-    return counts;
-  }, [storeApplications]);
-
   const jobFunnel = useMemo(() => {
     const funnel: Record<string, { views: number; applies: number; interviews: number; hires: number }> = {};
     storeJobs.forEach((j) => {
@@ -159,7 +151,7 @@ const StorePage: React.FC = () => {
 
   const jobApplications = useMemo(() => {
     if (!expandedJobId || !storeJobIds.has(expandedJobId)) return [];
-    return storeApplications.filter((a) => a.jobId === expandedJobId);
+    return storeApplications.filter((a) => a.jobId === expandedJobId && storeJobIds.has(a.jobId));
   }, [storeApplications, expandedJobId, storeJobIds]);
 
   usePullDownRefresh(() => {

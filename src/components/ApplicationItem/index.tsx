@@ -95,7 +95,7 @@ const ApplicationItem: React.FC<ApplicationItemProps> = ({
               <View className={styles.applicationItemTimelineTime}>
                 {application.interviewAt}
               </View>
-              {!application.interviewResult && (
+              {(!application.interviewResult || application.interviewResult === 'pending') && (
                 <View style={{ display: 'flex', gap: 16, marginTop: 16 }}>
                   <View
                     className={styles.applicationItemRejectBtn}
@@ -123,7 +123,7 @@ const ApplicationItem: React.FC<ApplicationItemProps> = ({
                   </View>
                 </View>
               )}
-              {application.interviewResult && (
+              {application.interviewResult && application.interviewResult !== 'pending' && (
                 <Text
                   style={{
                     marginTop: 12,

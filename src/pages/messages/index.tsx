@@ -4,10 +4,9 @@ import Taro from '@tarojs/taro';
 import { usePullDownRefresh } from '@tarojs/taro';
 import MessageItem from '@/components/MessageItem';
 import EmptyState from '@/components/EmptyState';
-import { useApp, methodLabelMap } from '@/store/AppContext';
+import { useApp } from '@/store/AppContext';
 import type { Message } from '@/types';
 import styles from './index.module.scss';
-import classnames from 'classnames';
 
 const MessagesPage: React.FC = () => {
   const { messages, markAllRead, markChatRead, getStoreChatId, respondInterview } = useApp();
@@ -90,7 +89,7 @@ const MessagesPage: React.FC = () => {
                   message={msg}
                   onClick={() => handleMessageClick(msg)}
                 />
-                {msg.type === 'interview' && msg.interviewInfo && !msg.interviewInfo.result && (
+                {msg.type === 'interview' && msg.interviewInfo && (!msg.interviewInfo.result || msg.interviewInfo.result === 'pending') && (
                   <View
                     style={{
                       padding: '0 32rpx 24rpx',
@@ -134,7 +133,7 @@ const MessagesPage: React.FC = () => {
                     </View>
                   </View>
                 )}
-                {msg.type === 'interview' && msg.interviewInfo && msg.interviewInfo.result && (
+                {msg.type === 'interview' && msg.interviewInfo && msg.interviewInfo.result && msg.interviewInfo.result !== 'pending' && (
                   <View
                     style={{
                       padding: '0 32rpx 24rpx',

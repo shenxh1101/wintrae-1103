@@ -1,10 +1,10 @@
-import React, { useState, useRef, useEffect, useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import { View, Text, ScrollView, Input } from '@tarojs/components';
 import Taro from '@tarojs/taro';
 import { useRouter } from '@tarojs/taro';
 import Avatar from '@/components/Avatar';
 import { useApp, methodLabelMap } from '@/store/AppContext';
-import type { ChatMessage } from '@/types';
+import type { ChatMessage, InterviewResult } from '@/types';
 import classnames from 'classnames';
 import styles from './index.module.scss';
 
@@ -36,11 +36,29 @@ const ChatDetailPage: React.FC = () => {
   const [inputText, setInputText] = useState('');
   const history = getChatHistory(chatId);
   const [, forceUpdate] = useState(0);
-  const scrollRef = useRef<any>(null);
 
-  const interviewMessages = useMemo(() => {
-    return history.filter((m) => m.interviewInfo);
-  }, [history]);
+  const appInterviewResult = useMemo<InterviewResult | undefined>(() => {
+    if (applicationId) {
+      const app = applications.find((a) => a.id === applicationId);
+      return app?.interviewResult;
+    }
+    const interviewApp = applications.find((a) => {
+      const appChatId = getStoreChatId(a.job?.storeId || a.jobId);
+      return appChatId === chatId && a.status === 'interview';
+    });
+    return interviewApp?.interviewResult;
+  }, [applications, applicationId, chatId, getStoreChatId]);
+
+  const effectiveResult = useMemo<InterviewResult | undefined>(() => {
+    if (appInterviewResult && appInterviewResult !== 'pending') return appInterviewResult;
+    const lastInterviewMsg = [...history].reverse().find((m) => m.type === 'interview' && m.interviewInfo);
+    if (lastInterviewMsg?.interviewInfo?.result && lastInterviewMsg.interviewInfo.result !== 'pending') {
+      return lastInterviewMsg.interviewInfo.result;
+    }
+    const pendingExists = history.some((m) => m.type === 'interview' && m.interviewInfo?.result === 'pending');
+    if (pendingExists) return 'pending';
+    return undefined;
+  }, [history, appInterviewResult]);
 
   const sendMessage = () => {
     if (!inputText.trim()) return;
@@ -84,19 +102,17 @@ const ChatDetailPage: React.FC = () => {
     forceUpdate((x) => x + 1);
   };
 
-  const handleRespondInterview = (msgId: string, accept: boolean) => {
-    if (applicationId) {
-      respondInterview(applicationId, accept ? 'accepted' : 'rejected');
-    } else {
-      const match = applications.find((a) => a.storeId === chatId || a.jobId === chatId);
-      if (match) respondInterview(match.id, accept ? 'accepted' : 'rejected');
+  const handleRespondInterview = (accept: boolean) => {
+    let targetAppId = applicationId;
+    if (!targetAppId) {
+      const match = applications.find((a) => {
+        const appChatId = getStoreChatId(a.job?.storeId || a.jobId);
+        return appChatId === chatId && a.status === 'interview';
+      });
+      targetAppId = match?.id || '';
     }
-    const msgIndex = history.findIndex((m) => m.id === msgId);
-    if (msgIndex >= 0 && history[msgIndex].interviewInfo) {
-      history[msgIndex].interviewInfo = {
-        ...history[msgIndex].interviewInfo!,
-        result: accept ? 'accepted' : 'rejected',
-      };
+    if (targetAppId) {
+      respondInterview(targetAppId, accept ? 'accepted' : 'rejected');
     }
     forceUpdate((x) => x + 1);
     Taro.showToast({
@@ -104,10 +120,6 @@ const ChatDetailPage: React.FC = () => {
       icon: 'success',
     });
   };
-
-  useEffect(() => {
-    forceUpdate((x) => x + 1);
-  }, [chatId]);
 
   return (
     <View className={styles.page}>
@@ -126,6 +138,8 @@ const ChatDetailPage: React.FC = () => {
 
         {history.map((msg) => {
           const isMe = msg.role === (role === 'store' ? 'store' : 'user');
+          const isInterviewMsg = msg.type === 'interview' && msg.interviewInfo;
+
           return (
             <View
               key={msg.id}
@@ -143,47 +157,51 @@ const ChatDetailPage: React.FC = () => {
               <View
                 className={classnames(
                   styles.chatListMessage,
-                  msg.type === 'interview' && styles.chatListInterviewMsg
+                  isInterviewMsg && styles.chatListInterviewMsg
                 )}
               >
-                {msg.type === 'interview' && msg.interviewInfo ? (
+                {isInterviewMsg ? (
                   <View className={styles.chatListInterviewCard}>
                     <Text style={{ fontSize: 24, color: '#722ED1' }}>📅 面试邀约</Text>
                     <Text style={{ fontSize: 30, fontWeight: 600, color: '#1D2129', marginTop: 8 }}>
-                      {methodLabelMap[msg.interviewInfo.method]}
+                      {methodLabelMap[msg.interviewInfo!.method]}
                     </Text>
                     <Text style={{ fontSize: 26, color: '#4E5969', marginTop: 8 }}>
-                      时间：{msg.interviewInfo.time}
+                      时间：{msg.interviewInfo!.time}
                     </Text>
-                    {msg.interviewInfo.result && (
-                      <Text
-                        style={{
-                          marginTop: 16,
-                          fontSize: 26,
-                          color: msg.interviewInfo.result === 'accepted' ? '#00B42A' : '#F53F3F',
-                          fontWeight: 500,
-                        }}
-                      >
-                        {msg.interviewInfo.result === 'accepted' ? '✓ 已接受' : '✗ 已婉拒'}
+
+                    {effectiveResult === 'accepted' && (
+                      <Text style={{ marginTop: 16, fontSize: 26, color: '#00B42A', fontWeight: 500 }}>
+                        ✓ 已接受
                       </Text>
                     )}
-                    {!msg.interviewInfo.result && msg.role === 'store' && role !== 'store' && (
+                    {effectiveResult === 'rejected' && (
+                      <Text style={{ marginTop: 16, fontSize: 26, color: '#F53F3F', fontWeight: 500 }}>
+                        ✗ 已婉拒
+                      </Text>
+                    )}
+                    {effectiveResult === 'pending' && msg.role === 'store' && role !== 'store' && (
                       <View style={{ display: 'flex', gap: 16, marginTop: 16 }}>
                         <View
                           className={styles.chatListInterviewRejectBtn}
-                          onClick={() => handleRespondInterview(msg.id, false)}
+                          onClick={() => handleRespondInterview(false)}
                         >
                           婉拒
                         </View>
                         <View
                           className={styles.chatListInterviewAcceptBtn}
-                          onClick={() => handleRespondInterview(msg.id, true)}
+                          onClick={() => handleRespondInterview(true)}
                         >
                           接受
                         </View>
                       </View>
                     )}
-                    {!msg.interviewInfo.result && msg.role !== 'store' && role === 'store' && (
+                    {effectiveResult === 'pending' && msg.role !== 'store' && role === 'store' && (
+                      <Text style={{ marginTop: 16, fontSize: 26, color: '#86909C' }}>
+                        等待对方确认
+                      </Text>
+                    )}
+                    {effectiveResult === 'pending' && msg.role === 'store' && role === 'store' && (
                       <Text style={{ marginTop: 16, fontSize: 26, color: '#86909C' }}>
                         等待对方确认
                       </Text>

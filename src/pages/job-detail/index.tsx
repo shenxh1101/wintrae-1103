@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, ScrollView, Text } from '@tarojs/components';
+import { View, ScrollView } from '@tarojs/components';
 import Taro from '@tarojs/taro';
 import { useRouter } from '@tarojs/taro';
 import Avatar from '@/components/Avatar';

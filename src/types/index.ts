@@ -83,13 +83,15 @@ export interface Message {
 
 export interface ChatMessage {
   id: string;
-  senderId: string;
-  senderName: string;
-  senderAvatar: string;
+  senderId?: string;
+  senderName?: string;
+  senderAvatar?: string;
   content: string;
   type: 'text' | 'image' | 'voice' | 'video' | 'interview';
   time: string;
-  isMine: boolean;
+  isMine?: boolean;
+  role?: 'store' | 'user';
+  read?: boolean;
   interviewInfo?: {
     method: InterviewMethod;
     time: string;

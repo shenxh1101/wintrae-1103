@@ -29,6 +29,8 @@ export const mockApplications: Application[] = [
     appliedAt: '2026-06-08 09:15',
     viewedAt: '2026-06-08 11:30',
     interviewAt: '2026-06-14 10:00',
+    interviewMethod: 'onsite',
+    interviewResult: 'pending',
     hasTrial: false,
     timeline: [
       { status: 'applied', time: '2026-06-08 09:15', label: '已投递' },

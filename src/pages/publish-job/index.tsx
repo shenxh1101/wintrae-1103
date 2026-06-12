@@ -101,6 +101,7 @@ const PublishJobPage: React.FC = () => {
       applyCount: 0,
       isFavorite: false,
       status: 'active',
+      storeId: 'store_xicha001',
     };
 
     addJob(newJob);
