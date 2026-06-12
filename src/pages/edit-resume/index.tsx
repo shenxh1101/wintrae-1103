@@ -5,7 +5,7 @@ import { useApp } from '@/store/AppContext';
 import classnames from 'classnames';
 import styles from './index.module.scss';
 
-const weekDays = ['一', '二', '三', '四', '五', '六', '日'];
+const weekDays = ['周一', '周二', '周三', '周四', '周五', '周六', '周日'];
 const periods = ['上午', '下午', '晚上'];
 
 const EditResumePage: React.FC = () => {
@@ -13,8 +13,13 @@ const EditResumePage: React.FC = () => {
   const [resume, setResume] = useState({ ...globalResume });
   const [timeSelection, setTimeSelection] = useState<Record<string, string[]>>(() => {
     const result: Record<string, string[]> = {};
-    resume.availableTime.forEach((t) => {
+    globalResume.availableTime.forEach((t) => {
       result[t.day] = [...t.periods];
+    });
+    weekDays.forEach((day) => {
+      if (!result[day]) {
+        result[day] = ['休息'];
+      }
     });
     return result;
   });
@@ -23,9 +28,13 @@ const EditResumePage: React.FC = () => {
   const toggleTime = (day: string, period: string) => {
     setTimeSelection((prev) => {
       const current = prev[day] || [];
-      const next = current.includes(period)
-        ? current.filter((p) => p !== period)
-        : [...current, period];
+      if (period === '休息') {
+        return { ...prev, [day]: ['休息'] };
+      }
+      const withoutRest = current.filter((p) => p !== '休息');
+      const next = withoutRest.includes(period)
+        ? withoutRest.filter((p) => p !== period)
+        : [...withoutRest, period];
       return { ...prev, [day]: next.length > 0 ? next : ['休息'] };
     });
   };
@@ -55,11 +64,10 @@ const EditResumePage: React.FC = () => {
   };
 
   const handleSave = () => {
-    const availableTime = weekDays.map((day) => {
-      const key = `周${day}`;
-      const periodsArr = timeSelection[key] || timeSelection[day] || ['休息'];
-      return { day: `周${day}`, periods: periodsArr };
-    });
+    const availableTime = weekDays.map((day) => ({
+      day,
+      periods: timeSelection[day] || ['休息'],
+    }));
     const saved = { ...resume, availableTime };
     updateResume(saved);
     Taro.showToast({ title: '保存成功', icon: 'success' });
@@ -209,11 +217,11 @@ const EditResumePage: React.FC = () => {
         <View className={styles.timeGrid}>
           {weekDays.map((day) => (
             <View key={day}>
-              <View className={styles.timeGridTimeDay}>周{day}</View>
+              <View className={styles.timeGridTimeDay}>{day}</View>
               {periods.map((period) => {
-                const isActive =
-                  timeSelection[`周${day}`]?.includes(period) ||
-                  timeSelection[day]?.includes(period);
+                const currentPeriods = timeSelection[day] || ['休息'];
+                const isRest = currentPeriods.includes('休息');
+                const isActive = !isRest && currentPeriods.includes(period);
                 return (
                   <View
                     key={period}

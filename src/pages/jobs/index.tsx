@@ -12,11 +12,19 @@ import styles from './index.module.scss';
 
 const quickTags = ['近3天发布', '急招', '包吃住', '高薪', '无需经验'];
 
+const sortOptions = [
+  { key: 'default', label: '综合' },
+  { key: 'distance', label: '离我最近' },
+  { key: 'salary', label: '薪资最高' },
+  { key: 'newest', label: '最新发布' },
+];
+
 const JobsPage: React.FC = () => {
   const { jobs, toggleFavorite } = useApp();
   const [searchText, setSearchText] = useState('');
   const [activeTags, setActiveTags] = useState<string[]>([]);
   const [activeFilters, setActiveFilters] = useState<Record<string, string>>({});
+  const [sortBy, setSortBy] = useState('default');
 
   const filterItems: FilterItem[] = [
     {
@@ -89,8 +97,9 @@ const JobsPage: React.FC = () => {
     toggleFavorite(jobId);
   };
 
-  const filteredJobs = useMemo(() => {
-    return jobs.filter((job) => {
+  const sortedAndFilteredJobs = useMemo(() => {
+    const filtered = jobs.filter((job) => {
+      if (job.status === 'paused') return false;
       if (searchText && !job.title.includes(searchText) && !job.storeName.includes(searchText)) {
         return false;
       }
@@ -111,7 +120,23 @@ const JobsPage: React.FC = () => {
       if (activeTags.includes('高薪') && job.salaryMax < 6000) return false;
       return true;
     });
-  }, [jobs, searchText, activeFilters, activeTags]);
+
+    const sorted = [...filtered];
+    switch (sortBy) {
+      case 'distance':
+        sorted.sort((a, b) => a.distanceValue - b.distanceValue);
+        break;
+      case 'salary':
+        sorted.sort((a, b) => b.salaryMax - a.salaryMax);
+        break;
+      case 'newest':
+        sorted.sort((a, b) => (b.publishedAtValue || 0) - (a.publishedAtValue || 0));
+        break;
+      default:
+        break;
+    }
+    return sorted;
+  }, [jobs, searchText, activeFilters, activeTags, sortBy]);
 
   usePullDownRefresh(() => {
     setTimeout(() => {
@@ -158,9 +183,25 @@ const JobsPage: React.FC = () => {
         ))}
       </View>
 
+      <View className={styles.sortBar}>
+        {sortOptions.map((opt) => (
+          <View
+            key={opt.key}
+            className={classnames(
+              styles.sortBarItem,
+              sortBy === opt.key && styles.sortBarItemActive
+            )}
+            onClick={() => setSortBy(opt.key)}
+          >
+            {opt.label}
+            {sortBy === opt.key && <Text className={styles.sortBarArrow}>↓</Text>}
+          </View>
+        ))}
+      </View>
+
       <ScrollView scrollY className={styles.jobList}>
-        {filteredJobs.length > 0 ? (
-          filteredJobs.map((job) => (
+        {sortedAndFilteredJobs.length > 0 ? (
+          sortedAndFilteredJobs.map((job) => (
             <JobCard
               key={job.id}
               job={job}

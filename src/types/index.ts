@@ -18,9 +18,11 @@ export interface Job {
   benefits: string[];
   address: string;
   publishedAt: string;
+  publishedAtValue: number;
   viewCount: number;
   applyCount: number;
   isFavorite: boolean;
+  status: 'active' | 'paused';
 }
 
 export type ApplicationStatus =
@@ -29,6 +31,12 @@ export type ApplicationStatus =
   | 'interview'
   | 'hired'
   | 'rejected';
+
+export interface TimelineEntry {
+  status: ApplicationStatus;
+  time: string;
+  label: string;
+}
 
 export interface Application {
   id: string;
@@ -44,6 +52,7 @@ export interface Application {
   hasTrial: boolean;
   trialAt?: string;
   feedback?: string;
+  timeline: TimelineEntry[];
 }
 
 export interface Message {

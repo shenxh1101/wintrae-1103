@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, Input, ScrollView } from '@tarojs/components';
 import Taro from '@tarojs/taro';
 import { useRouter } from '@tarojs/taro';
@@ -13,8 +13,12 @@ const ChatDetailPage: React.FC = () => {
   const router = useRouter();
   const storeName = router.params.name || '喜茶(万达店)';
   const storeId = router.params.storeId || '';
-  const { markChatRead } = useApp();
-  const [chatMessages, setChatMessages] = useState<ChatMessage[]>(mockChatMessages);
+  const { markChatRead, chatHistories, addChatMessage } = useApp();
+
+  const persisted = storeId ? (chatHistories[storeId] || []) : [];
+  const [chatMessages, setChatMessages] = useState<ChatMessage[]>(
+    persisted.length > 0 ? persisted : mockChatMessages
+  );
   const [inputText, setInputText] = useState('');
   const [showQuickReplies, setShowQuickReplies] = useState(true);
   const scrollRef = useRef<any>(null);
@@ -25,6 +29,12 @@ const ChatDetailPage: React.FC = () => {
       markChatRead(storeId);
     }
   }, [storeName, storeId, markChatRead]);
+
+  const persistMessage = (msg: ChatMessage) => {
+    if (storeId) {
+      addChatMessage(storeId, msg);
+    }
+  };
 
   const sendMessage = (content?: string) => {
     const text = content || inputText.trim();
@@ -45,6 +55,7 @@ const ChatDetailPage: React.FC = () => {
     };
 
     setChatMessages((prev) => [...prev, newMsg]);
+    persistMessage(newMsg);
     setInputText('');
     setShowQuickReplies(false);
 
@@ -63,6 +74,7 @@ const ChatDetailPage: React.FC = () => {
         isMine: false,
       };
       setChatMessages((prev) => [...prev, reply]);
+      persistMessage(reply);
     }, 1200);
   };
 
@@ -89,6 +101,7 @@ const ChatDetailPage: React.FC = () => {
       isMine: false,
     };
     setChatMessages((prev) => [...prev, inviteMsg]);
+    persistMessage(inviteMsg);
   };
 
   return (

@@ -5,10 +5,9 @@ import { usePullDownRefresh } from '@tarojs/taro';
 import { useApp } from '@/store/AppContext';
 import Avatar from '@/components/Avatar';
 import CandidateCard from '@/components/CandidateCard';
-import JobCard from '@/components/JobCard';
 import EmptyState from '@/components/EmptyState';
 import { mockCandidates } from '@/data/candidates';
-import type { Candidate } from '@/types';
+import type { Candidate, Application, ApplicationStatus } from '@/types';
 import classnames from 'classnames';
 import styles from './index.module.scss';
 
@@ -27,13 +26,22 @@ const quickActions = [
 ];
 
 const StorePage: React.FC = () => {
-  const { role, setRole, jobs } = useApp();
+  const { role, setRole, jobs, toggleJobStatus, applications, updateApplicationStatus } = useApp();
   const [candidates] = useState<Candidate[]>(mockCandidates);
   const [activeTab, setActiveTab] = useState<string>('all');
+  const [expandedJobId, setExpandedJobId] = useState<string | null>(null);
 
   const isStoreMode = role === 'store';
 
-  const storeJobs = useMemo(() => jobs.slice(0, 5), [jobs]);
+  const storeJobs = useMemo(() => jobs, [jobs]);
+
+  const jobAppCounts = useMemo(() => {
+    const counts: Record<string, number> = {};
+    applications.forEach((a) => {
+      counts[a.jobId] = (counts[a.jobId] || 0) + 1;
+    });
+    return counts;
+  }, [applications]);
 
   const filteredCandidates = useMemo(() => {
     if (activeTab === 'all') return candidates;
@@ -41,11 +49,12 @@ const StorePage: React.FC = () => {
   }, [candidates, activeTab]);
 
   const stats = useMemo(() => {
+    const activeJobs = storeJobs.filter((j) => j.status === 'active');
     return {
       candidates: candidates.length,
       pending: candidates.filter((c) => c.status === 'pending').length,
       hired: candidates.filter((c) => c.status === 'hired').length,
-      jobs: storeJobs.length,
+      jobs: activeJobs.length,
     };
   }, [candidates, storeJobs]);
 
@@ -64,6 +73,32 @@ const StorePage: React.FC = () => {
       Taro.showToast({ title: '功能开发中', icon: 'none' });
     }
   };
+
+  const handleToggleJob = (jobId: string) => {
+    toggleJobStatus(jobId);
+    const job = jobs.find((j) => j.id === jobId);
+    Taro.showToast({
+      title: job?.status === 'active' ? '已暂停招聘' : '已重新开启',
+      icon: 'success',
+    });
+  };
+
+  const handleToggleExpand = (jobId: string) => {
+    setExpandedJobId(expandedJobId === jobId ? null : jobId);
+  };
+
+  const handleAppStatus = (app: Application, status: ApplicationStatus) => {
+    updateApplicationStatus(app.id, status);
+    Taro.showToast({
+      title: status === 'viewed' ? '已标为已查看' : status === 'interview' ? '已邀约面试' : status === 'hired' ? '已录用' : '已拒绝',
+      icon: 'success',
+    });
+  };
+
+  const jobApplications = useMemo(() => {
+    if (!expandedJobId) return [];
+    return applications.filter((a) => a.jobId === expandedJobId);
+  }, [applications, expandedJobId]);
 
   usePullDownRefresh(() => {
     setTimeout(() => {
@@ -160,25 +195,100 @@ const StorePage: React.FC = () => {
 
       <View className={styles.sectionHeader}>
         <Text className={styles.sectionHeaderSectionTitle}>在招职位</Text>
-        <Text
-          className={styles.sectionHeaderSectionMore}
-          onClick={() => {}}
-        >
-          管理全部
-        </Text>
+        <Text className={styles.sectionHeaderSectionMore}>管理全部</Text>
       </View>
+
       {storeJobs.map((job) => (
-        <JobCard key={job.id} job={job} />
+        <View key={job.id} className={styles.jobManageCard}>
+          <View className={styles.jobManageCardHeader} onClick={() => handleToggleExpand(job.id)}>
+            <View className={styles.jobManageCardTitle}>
+              <Text className={styles.jobManageCardTitleText}>{job.title}</Text>
+              <View
+                className={classnames(
+                  styles.jobManageCardBadge,
+                  job.status === 'active' ? styles.jobManageCardBadgeActive : styles.jobManageCardBadgePaused
+                )}
+              >
+                {job.status === 'active' ? '招聘中' : '已暂停'}
+              </View>
+            </View>
+            <View className={styles.jobManageCardMeta}>
+              {job.salary}元/月 · {job.shift}
+            </View>
+            <View className={styles.jobManageCardStats}>
+              <View className={styles.jobManageCardStatItem}>
+                <Text className={styles.jobManageCardStatNum}>{job.viewCount}</Text>
+                <Text className={styles.jobManageCardStatLabel}>浏览</Text>
+              </View>
+              <View className={styles.jobManageCardStatItem}>
+                <Text className={styles.jobManageCardStatNum}>{jobAppCounts[job.id] || job.applyCount}</Text>
+                <Text className={styles.jobManageCardStatLabel}>投递</Text>
+              </View>
+              <View className={styles.jobManageCardStatItem}>
+                <Text className={styles.jobManageCardStatNum}>{jobAppCounts[job.id] || 0}</Text>
+                <Text className={styles.jobManageCardStatLabel}>候选人</Text>
+              </View>
+            </View>
+            <Text className={styles.jobManageCardArrow}>
+              {expandedJobId === job.id ? '▲' : '▼'}
+            </Text>
+          </View>
+
+          {expandedJobId === job.id && (
+            <View className={styles.jobManageCardActions}>
+              <View
+                className={classnames(
+                  styles.jobManageCardActionBtn,
+                  job.status === 'active' ? styles.jobManageCardActionBtnPause : styles.jobManageCardActionBtnResume
+                )}
+                onClick={() => handleToggleJob(job.id)}
+              >
+                {job.status === 'active' ? '⏸ 暂停招聘' : '▶ 重新开启'}
+              </View>
+
+              {jobApplications.length > 0 && (
+                <View className={styles.jobManageCardApplicants}>
+                  <Text className={styles.jobManageCardApplicantsTitle}>投递记录</Text>
+                  {jobApplications.map((app) => (
+                    <View key={app.id} className={styles.jobManageCardApplicant}>
+                      <View className={styles.jobManageCardApplicantInfo}>
+                        <Text className={styles.jobManageCardApplicantName}>求职者</Text>
+                        <Text className={styles.jobManageCardApplicantTime}>{app.appliedAt}</Text>
+                      </View>
+                      <View className={styles.jobManageCardApplicantActions}>
+                        {app.status === 'applied' && (
+                          <>
+                            <View className={styles.jobManageCardMiniBtn} onClick={() => handleAppStatus(app, 'viewed')}>查看</View>
+                            <View className={styles.jobManageCardMiniBtnPrimary} onClick={() => handleAppStatus(app, 'interview')}>邀面试</View>
+                          </>
+                        )}
+                        {app.status === 'viewed' && (
+                          <>
+                            <View className={styles.jobManageCardMiniBtnPrimary} onClick={() => handleAppStatus(app, 'interview')}>邀面试</View>
+                            <View className={styles.jobManageCardMiniBtn} onClick={() => handleAppStatus(app, 'rejected')}>拒绝</View>
+                          </>
+                        )}
+                        {app.status === 'interview' && (
+                          <>
+                            <View className={styles.jobManageCardMiniBtnPrimary} onClick={() => handleAppStatus(app, 'hired')}>录用</View>
+                            <View className={styles.jobManageCardMiniBtn} onClick={() => handleAppStatus(app, 'rejected')}>拒绝</View>
+                          </>
+                        )}
+                        {app.status === 'hired' && <Text style={{ color: '#00B42A', fontSize: 24 }}>已录用</Text>}
+                        {app.status === 'rejected' && <Text style={{ color: '#F53F3F', fontSize: 24 }}>已拒绝</Text>}
+                      </View>
+                    </View>
+                  ))}
+                </View>
+              )}
+            </View>
+          )}
+        </View>
       ))}
 
       <View className={styles.sectionHeader}>
         <Text className={styles.sectionHeaderSectionTitle}>候选人</Text>
-        <Text
-          className={styles.sectionHeaderSectionMore}
-          onClick={() => {}}
-        >
-          查看全部
-        </Text>
+        <Text className={styles.sectionHeaderSectionMore}>查看全部</Text>
       </View>
 
       <View className={styles.tabs}>

@@ -63,15 +63,29 @@
     }
   }
 
-  &TimelineDot {
+  &TimelineDotWrap {
     position: absolute;
     left: -32rpx;
     top: 6rpx;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  &TimelineLine {
+    width: 2rpx;
+    background: $color-border;
+    min-height: 40rpx;
+    margin-top: 4rpx;
+  }
+
+  &TimelineDot {
     width: 18rpx;
     height: 18rpx;
     border-radius: $radius-round;
     background: $color-border;
     border: 4rpx solid $color-bg-card;
+    flex-shrink: 0;
 
     &-done {
       background: $color-success;
@@ -80,6 +94,11 @@
     &-current {
       background: $color-primary;
       box-shadow: 0 0 0 6rpx $color-primary-bg;
+    }
+
+    &-rejected {
+      background: #F53F3F;
+      box-shadow: 0 0 0 6rpx rgba(245, 63, 63, 0.15);
     }
   }
 

@@ -24,6 +24,8 @@ export const mockJobs: Job[] = [
     viewCount: 128,
     applyCount: 23,
     isFavorite: false,
+    publishedAtValue: Date.now() - 1800000,
+    status: 'active',
   },
   {
     id: 'job002',
@@ -48,6 +50,8 @@ export const mockJobs: Job[] = [
     viewCount: 256,
     applyCount: 45,
     isFavorite: true,
+    publishedAtValue: Date.now() - 3600000,
+    status: 'active',
   },
   {
     id: 'job003',
@@ -72,6 +76,8 @@ export const mockJobs: Job[] = [
     viewCount: 89,
     applyCount: 12,
     isFavorite: false,
+    publishedAtValue: Date.now() - 7200000,
+    status: 'active',
   },
   {
     id: 'job004',
@@ -96,6 +102,8 @@ export const mockJobs: Job[] = [
     viewCount: 167,
     applyCount: 28,
     isFavorite: false,
+    publishedAtValue: Date.now() - 14400000,
+    status: 'active',
   },
   {
     id: 'job005',
@@ -120,6 +128,8 @@ export const mockJobs: Job[] = [
     viewCount: 312,
     applyCount: 67,
     isFavorite: false,
+    publishedAtValue: Date.now() - 18000000,
+    status: 'active',
   },
   {
     id: 'job006',
@@ -144,6 +154,8 @@ export const mockJobs: Job[] = [
     viewCount: 145,
     applyCount: 19,
     isFavorite: true,
+    publishedAtValue: Date.now() - 21600000,
+    status: 'active',
   },
   {
     id: 'job007',
@@ -168,6 +180,8 @@ export const mockJobs: Job[] = [
     viewCount: 523,
     applyCount: 89,
     isFavorite: false,
+    publishedAtValue: Date.now() - 28800000,
+    status: 'active',
   },
   {
     id: 'job008',
@@ -192,6 +206,8 @@ export const mockJobs: Job[] = [
     viewCount: 98,
     applyCount: 15,
     isFavorite: false,
+    publishedAtValue: Date.now() - 43200000,
+    status: 'active',
   },
   {
     id: 'job009',
@@ -216,6 +232,8 @@ export const mockJobs: Job[] = [
     viewCount: 134,
     applyCount: 22,
     isFavorite: false,
+    publishedAtValue: Date.now() - 86400000,
+    status: 'active',
   },
   {
     id: 'job010',
@@ -240,6 +258,8 @@ export const mockJobs: Job[] = [
     viewCount: 178,
     applyCount: 31,
     isFavorite: false,
+    publishedAtValue: Date.now() - 172800000,
+    status: 'active',
   },
 ];
 

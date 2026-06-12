@@ -84,6 +84,39 @@
   padding-bottom: $spacing-lg;
 }
 
+.sortBar {
+  display: flex;
+  gap: $spacing-xs;
+  margin-bottom: $spacing-md;
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  padding: $spacing-xs;
+  box-shadow: $shadow-card;
+}
+
+.sortBarItem {
+  flex: 1;
+  height: 64rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  border-radius: $radius-md;
+  transition: all $transition-fast;
+  gap: 4rpx;
+}
+
+.sortBarItemActive {
+  background: $color-primary;
+  color: $color-text-white;
+  font-weight: $font-weight-medium;
+}
+
+.sortBarArrow {
+  font-size: $font-size-xs;
+}
+
 .loading {
   text-align: center;
   padding: $spacing-xl;

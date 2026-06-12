@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text } from '@tarojs/components';
 import StatusTag from '@/components/StatusTag';
-import type { Application } from '@/types';
+import type { Application, TimelineEntry } from '@/types';
 import { statusLabels } from '@/data/applications';
 import styles from './index.module.scss';
 import classnames from 'classnames';
@@ -11,6 +11,14 @@ interface ApplicationItemProps {
   onClick?: () => void;
 }
 
+const statusColorMap: Record<string, string> = {
+  applied: '#FF7D00',
+  viewed: '#2E86DE',
+  interview: '#722ED1',
+  hired: '#00B42A',
+  rejected: '#F53F3F',
+};
+
 const ApplicationItem: React.FC<ApplicationItemProps> = ({
   application,
   onClick,
@@ -18,57 +26,71 @@ const ApplicationItem: React.FC<ApplicationItemProps> = ({
   const currentStatus = application.status;
   const statusLabel = statusLabels[currentStatus];
 
-  const getTimelineData = () => {
-    const timeline = [
-      { key: 'applied', label: '投递成功', time: application.appliedAt, done: true },
-      {
-        key: 'viewed',
-        label: '企业已查看',
-        time: application.viewedAt || '',
-        done: !!application.viewedAt,
-      },
-      {
-        key: 'interview',
-        label: '面试安排',
-        time: application.interviewAt || '',
-        done: !!application.interviewAt,
-        note: application.interviewAt
-          ? `面试时间：${application.interviewAt}`
-          : '',
-      },
-      {
-        key: 'hired',
-        label: '录用通知',
-        time: application.hiredAt || '',
-        done: !!application.hiredAt,
-        note: application.feedback,
-      },
-    ];
+  const renderTimeline = () => {
+    const entries: TimelineEntry[] = application.timeline || [];
+    if (entries.length === 0) return null;
 
-    if (currentStatus === 'rejected') {
-      timeline.push({
-        key: 'rejected',
-        label: '未通过',
-        time: application.rejectedAt || '',
-        done: true,
-        note: application.rejectedReason,
-      });
-    }
+    return (
+      <View className={styles.applicationItemTimeline}>
+        {entries.map((entry, idx) => {
+          const isLast = idx === entries.length - 1;
+          const isCurrent = entry.status === currentStatus;
+          const isRejected = entry.status === 'rejected';
+          return (
+            <View key={`${entry.status}-${idx}`} className={styles.applicationItemTimelineItem}>
+              <View className={styles.applicationItemTimelineDotWrap}>
+                <View
+                  className={classnames(
+                    styles.applicationItemTimelineDot,
+                    isCurrent && styles.applicationItemTimelineDotCurrent,
+                    isRejected && styles.applicationItemTimelineDotRejected
+                  )}
+                  style={!isCurrent && !isRejected ? { background: statusColorMap[entry.status] || '#00B42A' } : {}}
+                />
+                {!isLast && <View className={styles.applicationItemTimelineLine} />}
+              </View>
+              <View className={styles.applicationItemTimelineContent}>
+                <View className={styles.applicationItemTimelineTitle}>
+                  {entry.label}
+                </View>
+                {entry.time && (
+                  <View className={styles.applicationItemTimelineTime}>
+                    {entry.time}
+                  </View>
+                )}
+              </View>
+            </View>
+          );
+        })}
 
-    if (application.hasTrial && application.trialAt) {
-      timeline.push({
-        key: 'trial',
-        label: '试岗安排',
-        time: application.trialAt,
-        done: true,
-        note: `请准时参加试岗`,
-      });
-    }
+        {application.hasTrial && application.trialAt && (
+          <View className={styles.applicationItemTimelineItem}>
+            <View className={styles.applicationItemTimelineDotWrap}>
+              <View className={classnames(styles.applicationItemTimelineDot)} style={{ background: '#FF7D00' }} />
+            </View>
+            <View className={styles.applicationItemTimelineContent}>
+              <View className={styles.applicationItemTimelineTitle}>试岗安排</View>
+              <View className={styles.applicationItemTimelineTime}>{application.trialAt}</View>
+              <View className={styles.applicationItemTimelineNote}>请准时参加试岗</View>
+            </View>
+          </View>
+        )}
 
-    return timeline;
+        {currentStatus === 'rejected' && application.rejectedReason && (
+          <View className={styles.applicationItemTimelineItem}>
+            <View className={styles.applicationItemTimelineDotWrap}>
+              <View className={styles.applicationItemTimelineDot} style={{ background: '#F53F3F' }} />
+            </View>
+            <View className={styles.applicationItemTimelineContent}>
+              <View className={styles.applicationItemTimelineNote} style={{ color: '#F53F3F' }}>
+                {application.rejectedReason}
+              </View>
+            </View>
+          </View>
+        )}
+      </View>
+    );
   };
-
-  const timeline = getTimelineData();
 
   return (
     <View className={styles.applicationItem} onClick={onClick}>
@@ -84,37 +106,7 @@ const ApplicationItem: React.FC<ApplicationItemProps> = ({
         <StatusTag status={currentStatus as any} label={statusLabel.label} />
       </View>
 
-      <View className={styles.applicationItemTimeline}>
-        {timeline.map((item) => {
-          const isCurrent = item.key === currentStatus;
-          return (
-            <View key={item.key} className={styles.applicationItemTimelineItem}>
-              <View
-                className={classnames(
-                  styles.applicationItemTimelineDot,
-                  item.done && styles.applicationItemTimelineDotDone,
-                  isCurrent && styles.applicationItemTimelineDotCurrent
-                )}
-              />
-              <View className={styles.applicationItemTimelineContent}>
-                <View className={styles.applicationItemTimelineTitle}>
-                  {item.label}
-                </View>
-                {item.time && (
-                  <View className={styles.applicationItemTimelineTime}>
-                    {item.time}
-                  </View>
-                )}
-                {item.note && (
-                  <View className={styles.applicationItemTimelineNote}>
-                    {item.note}
-                  </View>
-                )}
-              </View>
-            </View>
-          );
-        })}
-      </View>
+      {renderTimeline()}
 
       <View className={styles.applicationItemFooter}>
         <Text className={styles.applicationItemStoreName}>

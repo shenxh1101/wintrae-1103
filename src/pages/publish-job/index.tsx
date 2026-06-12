@@ -96,9 +96,11 @@ const PublishJobPage: React.FC = () => {
       benefits: [hasBoard ? '包吃' : '', hasLodging ? '包住' : '', '节日福利'].filter(Boolean),
       address: '万达广场1楼108号',
       publishedAt: '刚刚',
+      publishedAtValue: Date.now(),
       viewCount: 0,
       applyCount: 0,
       isFavorite: false,
+      status: 'active',
     };
 
     addJob(newJob);

@@ -185,3 +185,174 @@
   color: $color-text-white;
   font-weight: $font-weight-medium;
 }
+
+.jobManageCard {
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  margin-bottom: $spacing-md;
+  box-shadow: $shadow-card;
+  overflow: hidden;
+}
+
+.jobManageCardHeader {
+  padding: $spacing-lg;
+  position: relative;
+}
+
+.jobManageCardTitle {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+}
+
+.jobManageCardTitleText {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+}
+
+.jobManageCardBadge {
+  font-size: $font-size-xs;
+  padding: 4rpx 16rpx;
+  border-radius: $radius-button;
+  font-weight: $font-weight-medium;
+}
+
+.jobManageCardBadgeActive {
+  background: rgba(0, 180, 42, 0.1);
+  color: #00B42A;
+}
+
+.jobManageCardBadgePaused {
+  background: rgba(245, 63, 63, 0.1);
+  color: #F53F3F;
+}
+
+.jobManageCardMeta {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  margin-top: 8rpx;
+}
+
+.jobManageCardStats {
+  display: flex;
+  gap: $spacing-xl;
+  margin-top: $spacing-md;
+}
+
+.jobManageCardStatItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.jobManageCardStatNum {
+  font-size: $font-size-xl;
+  font-weight: $font-weight-bold;
+  color: $color-primary;
+}
+
+.jobManageCardStatLabel {
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+  margin-top: 4rpx;
+}
+
+.jobManageCardArrow {
+  position: absolute;
+  right: $spacing-lg;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: $font-size-sm;
+  color: $color-text-tertiary;
+}
+
+.jobManageCardActions {
+  border-top: 1rpx solid #F2F3F5;
+  padding: $spacing-lg;
+}
+
+.jobManageCardActionBtn {
+  @include button-reset;
+  width: 100%;
+  height: 72rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: $radius-button;
+  font-size: $font-size-md;
+  font-weight: $font-weight-medium;
+  margin-bottom: $spacing-md;
+}
+
+.jobManageCardActionBtnPause {
+  background: rgba(245, 63, 63, 0.1);
+  color: #F53F3F;
+}
+
+.jobManageCardActionBtnResume {
+  background: rgba(0, 180, 42, 0.1);
+  color: #00B42A;
+}
+
+.jobManageCardApplicants {
+  margin-top: $spacing-sm;
+}
+
+.jobManageCardApplicantsTitle {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  margin-bottom: $spacing-sm;
+}
+
+.jobManageCardApplicant {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: $spacing-sm 0;
+  border-bottom: 1rpx solid #F2F3F5;
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.jobManageCardApplicantInfo {
+  display: flex;
+  flex-direction: column;
+}
+
+.jobManageCardApplicantName {
+  font-size: $font-size-md;
+  color: $color-text-primary;
+  font-weight: $font-weight-medium;
+}
+
+.jobManageCardApplicantTime {
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+  margin-top: 4rpx;
+}
+
+.jobManageCardApplicantActions {
+  display: flex;
+  gap: $spacing-sm;
+  align-items: center;
+}
+
+.jobManageCardMiniBtn {
+  padding: 8rpx 20rpx;
+  border-radius: $radius-button;
+  font-size: $font-size-xs;
+  color: $color-text-secondary;
+  background: #F2F3F5;
+}
+
+.jobManageCardMiniBtnPrimary {
+  padding: 8rpx 20rpx;
+  border-radius: $radius-button;
+  font-size: $font-size-xs;
+  color: $color-text-white;
+  background: $color-primary;
+}
