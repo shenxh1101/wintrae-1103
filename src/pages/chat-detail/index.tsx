@@ -4,6 +4,7 @@ import Taro from '@tarojs/taro';
 import { useRouter } from '@tarojs/taro';
 import Avatar from '@/components/Avatar';
 import { mockChatMessages, quickReplies } from '@/data/messages';
+import { useApp } from '@/store/AppContext';
 import type { ChatMessage } from '@/types';
 import classnames from 'classnames';
 import styles from './index.module.scss';
@@ -11,20 +12,23 @@ import styles from './index.module.scss';
 const ChatDetailPage: React.FC = () => {
   const router = useRouter();
   const storeName = router.params.name || '喜茶(万达店)';
-  const [messages, setMessages] = useState<ChatMessage[]>(mockChatMessages);
+  const storeId = router.params.storeId || '';
+  const { markChatRead } = useApp();
+  const [chatMessages, setChatMessages] = useState<ChatMessage[]>(mockChatMessages);
   const [inputText, setInputText] = useState('');
   const [showQuickReplies, setShowQuickReplies] = useState(true);
   const scrollRef = useRef<any>(null);
 
   useEffect(() => {
-    Taro.setNavigationBarTitle({ title: storeName });
-  }, [storeName]);
+    Taro.setNavigationBarTitle({ title: decodeURIComponent(storeName) });
+    if (storeId) {
+      markChatRead(storeId);
+    }
+  }, [storeName, storeId, markChatRead]);
 
   const sendMessage = (content?: string) => {
     const text = content || inputText.trim();
     if (!text) return;
-
-    console.log('[ChatDetail] 发送消息:', text);
 
     const newMsg: ChatMessage = {
       id: `cm${Date.now()}`,
@@ -40,7 +44,7 @@ const ChatDetailPage: React.FC = () => {
       isMine: true,
     };
 
-    setMessages((prev) => [...prev, newMsg]);
+    setChatMessages((prev) => [...prev, newMsg]);
     setInputText('');
     setShowQuickReplies(false);
 
@@ -48,7 +52,7 @@ const ChatDetailPage: React.FC = () => {
       const reply: ChatMessage = {
         id: `cm${Date.now() + 1}`,
         senderId: 'store001',
-        senderName: storeName,
+        senderName: decodeURIComponent(storeName),
         senderAvatar: 'https://picsum.photos/id/1080/200/200',
         content: '好的，我们收到您的消息了，稍后会尽快回复您。',
         type: 'text',
@@ -58,26 +62,23 @@ const ChatDetailPage: React.FC = () => {
         }),
         isMine: false,
       };
-      setMessages((prev) => [...prev, reply]);
+      setChatMessages((prev) => [...prev, reply]);
     }, 1200);
   };
 
   const handleVoice = () => {
-    console.log('[ChatDetail] 发起语音面试');
     Taro.showToast({ title: '发起语音通话', icon: 'none' });
   };
 
   const handleVideo = () => {
-    console.log('[ChatDetail] 发起视频面试');
     Taro.showToast({ title: '发起视频通话', icon: 'none' });
   };
 
   const handleInterviewInvite = () => {
-    console.log('[ChatDetail] 发送面试邀约');
     const inviteMsg: ChatMessage = {
       id: `invite${Date.now()}`,
       senderId: 'store001',
-      senderName: storeName,
+      senderName: decodeURIComponent(storeName),
       senderAvatar: 'https://picsum.photos/id/1080/200/200',
       content: '面试邀约',
       type: 'interview',
@@ -87,7 +88,7 @@ const ChatDetailPage: React.FC = () => {
       }),
       isMine: false,
     };
-    setMessages((prev) => [...prev, inviteMsg]);
+    setChatMessages((prev) => [...prev, inviteMsg]);
   };
 
   return (
@@ -95,7 +96,7 @@ const ChatDetailPage: React.FC = () => {
       <View className={styles.chatHeader}>
         <View className={styles.chatHeaderHeaderInfo}>
           <Avatar src="https://picsum.photos/id/1080/200/200" size="sm" />
-          <Text className={styles.chatHeaderHeaderName}>{storeName}</Text>
+          <Text className={styles.chatHeaderHeaderName}>{decodeURIComponent(storeName)}</Text>
         </View>
         <View className={styles.chatHeaderHeaderActions}>
           <View
@@ -114,9 +115,9 @@ const ChatDetailPage: React.FC = () => {
       </View>
 
       <ScrollView scrollY className={styles.chatContent} ref={scrollRef}>
-        {messages.map((msg, idx) => (
+        {chatMessages.map((msg, idx) => (
           <View key={msg.id}>
-            {(idx === 0 || msg.time !== messages[idx - 1].time) && (
+            {(idx === 0 || msg.time !== chatMessages[idx - 1].time) && (
               <View className={styles.messageWrapTime}>{msg.time}</View>
             )}
             <View
@@ -149,7 +150,7 @@ const ChatDetailPage: React.FC = () => {
                       </View>
                       <View className={styles.interviewCard}>
                         <View className={styles.interviewCardInterviewTitle}>
-                          面试邀约 · 喜茶(万达店)
+                          面试邀约 · {decodeURIComponent(storeName)}
                         </View>
                         <View className={styles.interviewCardInterviewInfo}>
                           时间：2026-06-14 10:00
@@ -164,7 +165,6 @@ const ChatDetailPage: React.FC = () => {
                               styles.interviewCardInterviewBtnReject
                             )}
                             onClick={() => {
-                              console.log('[ChatDetail] 婉拒面试');
                               Taro.showToast({ title: '已婉拒', icon: 'none' });
                             }}
                           >
@@ -176,7 +176,6 @@ const ChatDetailPage: React.FC = () => {
                               styles.interviewCardInterviewBtnAccept
                             )}
                             onClick={() => {
-                              console.log('[ChatDetail] 接受面试');
                               Taro.showToast({
                                 title: '已接受面试',
                                 icon: 'success',

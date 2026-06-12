@@ -8,8 +8,7 @@ import CandidateCard from '@/components/CandidateCard';
 import JobCard from '@/components/JobCard';
 import EmptyState from '@/components/EmptyState';
 import { mockCandidates } from '@/data/candidates';
-import { mockJobs } from '@/data/jobs';
-import type { Candidate, Job } from '@/types';
+import type { Candidate } from '@/types';
 import classnames from 'classnames';
 import styles from './index.module.scss';
 
@@ -28,12 +27,13 @@ const quickActions = [
 ];
 
 const StorePage: React.FC = () => {
-  const { role, setRole } = useApp();
+  const { role, setRole, jobs } = useApp();
   const [candidates] = useState<Candidate[]>(mockCandidates);
-  const [jobs] = useState<Job[]>(mockJobs.slice(0, 3));
   const [activeTab, setActiveTab] = useState<string>('all');
 
   const isStoreMode = role === 'store';
+
+  const storeJobs = useMemo(() => jobs.slice(0, 5), [jobs]);
 
   const filteredCandidates = useMemo(() => {
     if (activeTab === 'all') return candidates;
@@ -45,13 +45,12 @@ const StorePage: React.FC = () => {
       candidates: candidates.length,
       pending: candidates.filter((c) => c.status === 'pending').length,
       hired: candidates.filter((c) => c.status === 'hired').length,
-      jobs: jobs.length,
+      jobs: storeJobs.length,
     };
-  }, [candidates, jobs]);
+  }, [candidates, storeJobs]);
 
   const handleRoleSwitch = () => {
     const newRole = role === 'store' ? 'jobseeker' : 'store';
-    console.log('[StorePage] 切换角色:', newRole);
     setRole(newRole);
     Taro.switchTab({
       url: newRole === 'store' ? '/pages/store/index' : '/pages/jobs/index',
@@ -59,7 +58,6 @@ const StorePage: React.FC = () => {
   };
 
   const handleQuickAction = (action: string) => {
-    console.log('[StorePage] 快捷操作:', action);
     if (action === 'publish') {
       Taro.navigateTo({ url: '/pages/publish-job/index' });
     } else {
@@ -68,7 +66,6 @@ const StorePage: React.FC = () => {
   };
 
   usePullDownRefresh(() => {
-    console.log('[StorePage] 下拉刷新');
     setTimeout(() => {
       Taro.stopPullDownRefresh();
     }, 800);
@@ -155,7 +152,6 @@ const StorePage: React.FC = () => {
       <View
         className={styles.publishBtn}
         onClick={() => {
-          console.log('[StorePage] 发布职位');
           Taro.navigateTo({ url: '/pages/publish-job/index' });
         }}
       >
@@ -166,14 +162,12 @@ const StorePage: React.FC = () => {
         <Text className={styles.sectionHeaderSectionTitle}>在招职位</Text>
         <Text
           className={styles.sectionHeaderSectionMore}
-          onClick={() => {
-            console.log('[StorePage] 查看全部职位');
-          }}
+          onClick={() => {}}
         >
           管理全部
         </Text>
       </View>
-      {jobs.map((job) => (
+      {storeJobs.map((job) => (
         <JobCard key={job.id} job={job} />
       ))}
 
@@ -181,9 +175,7 @@ const StorePage: React.FC = () => {
         <Text className={styles.sectionHeaderSectionTitle}>候选人</Text>
         <Text
           className={styles.sectionHeaderSectionMore}
-          onClick={() => {
-            console.log('[StorePage] 查看全部候选人');
-          }}
+          onClick={() => {}}
         >
           查看全部
         </Text>

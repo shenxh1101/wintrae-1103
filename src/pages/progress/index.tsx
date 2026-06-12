@@ -4,8 +4,7 @@ import Taro from '@tarojs/taro';
 import { usePullDownRefresh } from '@tarojs/taro';
 import ApplicationItem from '@/components/ApplicationItem';
 import EmptyState from '@/components/EmptyState';
-import { mockApplications } from '@/data/applications';
-import type { Application } from '@/types';
+import { useApp } from '@/store/AppContext';
 import classnames from 'classnames';
 import styles from './index.module.scss';
 
@@ -18,8 +17,8 @@ const tabs = [
 ];
 
 const ProgressPage: React.FC = () => {
+  const { applications } = useApp();
   const [activeTab, setActiveTab] = useState<string>('all');
-  const [applications] = useState<Application[]>(mockApplications);
 
   const stats = useMemo(() => {
     return {
@@ -40,7 +39,6 @@ const ProgressPage: React.FC = () => {
   );
 
   usePullDownRefresh(() => {
-    console.log('[ProgressPage] 下拉刷新');
     setTimeout(() => {
       Taro.stopPullDownRefresh();
     }, 800);
@@ -75,9 +73,7 @@ const ProgressPage: React.FC = () => {
           </Text>
           <Text
             className={styles.reminderCardReminderAction}
-            onClick={() => {
-              console.log('[ProgressPage] 查看试岗详情');
-            }}
+            onClick={() => {}}
           >
             查看
           </Text>

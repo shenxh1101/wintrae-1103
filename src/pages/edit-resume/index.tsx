@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import { View, Input, Image } from '@tarojs/components';
 import Taro from '@tarojs/taro';
-import { mockResume } from '@/data/resume';
-import type { Resume } from '@/types';
+import { useApp } from '@/store/AppContext';
 import classnames from 'classnames';
 import styles from './index.module.scss';
 
@@ -10,14 +9,16 @@ const weekDays = ['一', '二', '三', '四', '五', '六', '日'];
 const periods = ['上午', '下午', '晚上'];
 
 const EditResumePage: React.FC = () => {
-  const [resume, setResume] = useState<Resume>(mockResume);
+  const { resume: globalResume, updateResume } = useApp();
+  const [resume, setResume] = useState({ ...globalResume });
   const [timeSelection, setTimeSelection] = useState<Record<string, string[]>>(() => {
     const result: Record<string, string[]> = {};
     resume.availableTime.forEach((t) => {
-      result[t.day] = t.periods;
+      result[t.day] = [...t.periods];
     });
     return result;
   });
+  const [newCertName, setNewCertName] = useState('');
 
   const toggleTime = (day: string, period: string) => {
     setTimeSelection((prev) => {
@@ -29,21 +30,45 @@ const EditResumePage: React.FC = () => {
     });
   };
 
+  const handleAddCert = () => {
+    const name = newCertName.trim();
+    if (!name) {
+      Taro.showToast({ title: '请输入证书名称', icon: 'none' });
+      return;
+    }
+    const now = new Date();
+    const expireDate = new Date(now);
+    expireDate.setFullYear(expireDate.getFullYear() + 1);
+    const newCert = {
+      id: `cert${Date.now()}`,
+      name,
+      issueDate: now.toISOString().slice(0, 10),
+      expireDate: expireDate.toISOString().slice(0, 10),
+      isExpiring: false,
+    };
+    setResume((prev) => ({
+      ...prev,
+      certificates: [...prev.certificates, newCert],
+    }));
+    setNewCertName('');
+    Taro.showToast({ title: '证书已添加', icon: 'success' });
+  };
+
   const handleSave = () => {
-    console.log('[EditResume] 保存简历:', resume, timeSelection);
+    const availableTime = weekDays.map((day) => {
+      const key = `周${day}`;
+      const periodsArr = timeSelection[key] || timeSelection[day] || ['休息'];
+      return { day: `周${day}`, periods: periodsArr };
+    });
+    const saved = { ...resume, availableTime };
+    updateResume(saved);
     Taro.showToast({ title: '保存成功', icon: 'success' });
     setTimeout(() => {
       Taro.navigateBack();
     }, 800);
   };
 
-  const handleAddCert = () => {
-    console.log('[EditResume] 添加证书');
-    Taro.showToast({ title: '功能开发中', icon: 'none' });
-  };
-
   const handleChangeAvatar = () => {
-    console.log('[EditResume] 更换头像');
     Taro.showToast({ title: '选择头像', icon: 'none' });
   };
 
@@ -145,8 +170,37 @@ const EditResumePage: React.FC = () => {
             )}
           </View>
         ))}
-        <View className={styles.addBtn} onClick={handleAddCert}>
-          + 添加证书
+        <View style={{ display: 'flex', gap: 16, marginTop: 16, alignItems: 'center' }}>
+          <Input
+            style={{
+              flex: 1,
+              height: 72,
+              padding: '0 24',
+              background: '#F7F8FA',
+              borderRadius: 12,
+              fontSize: 28,
+              color: '#1D2129',
+            }}
+            placeholder="输入证书名称"
+            placeholderClass="input-placeholder"
+            value={newCertName}
+            onInput={(e) => setNewCertName(e.detail.value)}
+            onConfirm={handleAddCert}
+          />
+          <View
+            style={{
+              padding: '12rpx 24rpx',
+              background: '#FFF3EB',
+              color: '#FF6B35',
+              borderRadius: 12,
+              fontSize: 28,
+              fontWeight: 500,
+              whiteSpace: 'nowrap',
+            }}
+            onClick={handleAddCert}
+          >
+            + 添加
+          </View>
         </View>
       </View>
 

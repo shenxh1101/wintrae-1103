@@ -1,12 +1,10 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { View, Text, ScrollView } from '@tarojs/components';
 import Taro from '@tarojs/taro';
 import { usePullDownRefresh } from '@tarojs/taro';
+import { useApp } from '@/store/AppContext';
 import Avatar from '@/components/Avatar';
 import EmptyState from '@/components/EmptyState';
-import { mockResume, favoriteJobsIds } from '@/data/resume';
-import { mockJobs } from '@/data/jobs';
-import type { Resume } from '@/types';
 import classnames from 'classnames';
 import styles from './index.module.scss';
 
@@ -22,27 +20,23 @@ const menuItems = [
 ];
 
 const ResumePage: React.FC = () => {
-  const [resume] = useState<Resume>(mockResume);
+  const { resume, jobs } = useApp();
   const expiringCerts = resume.certificates.filter((c) => c.isExpiring);
-  const favoriteJobs = mockJobs.filter((j) => favoriteJobsIds.includes(j.id));
+  const favoriteJobs = jobs.filter((j) => j.isFavorite);
 
   const handleEdit = () => {
-    console.log('[ResumePage] 编辑简历');
     Taro.navigateTo({ url: '/pages/edit-resume/index' });
   };
 
-  const handleMenuAction = (action: string) => {
-    console.log('[ResumePage] 菜单操作:', action);
+  const handleMenuAction = (_action: string) => {
     Taro.showToast({ title: '功能开发中', icon: 'none' });
   };
 
   const handleAddCert = () => {
-    console.log('[ResumePage] 添加证书');
-    Taro.showToast({ title: '添加证书', icon: 'none' });
+    Taro.navigateTo({ url: '/pages/edit-resume/index' });
   };
 
   usePullDownRefresh(() => {
-    console.log('[ResumePage] 下拉刷新');
     setTimeout(() => {
       Taro.stopPullDownRefresh();
     }, 800);
@@ -139,7 +133,10 @@ const ResumePage: React.FC = () => {
               textAlign: 'center',
             }}
           >
-            点击编辑可修改可上班时间
+            {resume.availableTime.map((t) => {
+              if (t.periods.includes('休息')) return null;
+              return `${t.day}(${t.periods.join('/')}) `;
+            })}
           </View>
         </View>
 

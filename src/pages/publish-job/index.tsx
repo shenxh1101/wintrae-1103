@@ -1,13 +1,30 @@
 import React, { useState } from 'react';
 import { View, Text, Input, Textarea } from '@tarojs/components';
 import Taro from '@tarojs/taro';
+import { useApp } from '@/store/AppContext';
+import type { Job } from '@/types';
 import classnames from 'classnames';
 import styles from './index.module.scss';
 
 const shiftOptions = ['早班', '中班', '晚班', '两班倒', '弹性排班'];
+const shiftTypeMap: Record<string, string> = {
+  '早班': 'morning',
+  '中班': 'afternoon',
+  '晚班': 'night',
+  '两班倒': 'all',
+  '弹性排班': 'all',
+};
+const shiftDescMap: Record<string, string> = {
+  '早班': '早班 09:00-18:00',
+  '中班': '中班 12:00-21:00',
+  '晚班': '晚班 16:00-01:00',
+  '两班倒': '两班倒',
+  '弹性排班': '弹性排班',
+};
 const defaultTags = ['包吃', '包住', '月休4天', '环境好', '无需经验', '急招'];
 
 const PublishJobPage: React.FC = () => {
+  const { addJob } = useApp();
   const [title, setTitle] = useState('');
   const [salaryMin, setSalaryMin] = useState('');
   const [salaryMax, setSalaryMax] = useState('');
@@ -57,17 +74,34 @@ const PublishJobPage: React.FC = () => {
       Taro.showToast({ title: '请输入薪资范围', icon: 'none' });
       return;
     }
-    console.log('[PublishJob] 发布职位:', {
-      title,
+
+    const primaryShift = selectedShifts[0] || '早班';
+    const newJob: Job = {
+      id: `job${Date.now()}`,
+      title: title.trim(),
       salary: `${salaryMin}-${salaryMax}`,
-      shifts: selectedShifts,
+      salaryMin: parseInt(salaryMin, 10) || 0,
+      salaryMax: parseInt(salaryMax, 10) || 0,
+      storeName: '喜茶(万达店)',
+      storeAvatar: 'https://picsum.photos/id/1080/200/200',
+      distance: '500m',
+      distanceValue: 0.5,
+      shift: shiftDescMap[primaryShift] || primaryShift,
+      shiftType: (shiftTypeMap[primaryShift] || 'morning') as Job['shiftType'],
       hasBoard,
       hasLodging,
-      headcount,
-      description,
-      requirements,
-      tags,
-    });
+      tags: tags.length > 0 ? tags : ['新发布'],
+      description: description || '暂无描述',
+      requirements: requirements ? requirements.split(/[，,；;\n]/).filter(Boolean) : ['暂无要求'],
+      benefits: [hasBoard ? '包吃' : '', hasLodging ? '包住' : '', '节日福利'].filter(Boolean),
+      address: '万达广场1楼108号',
+      publishedAt: '刚刚',
+      viewCount: 0,
+      applyCount: 0,
+      isFavorite: false,
+    };
+
+    addJob(newJob);
     Taro.showToast({ title: '发布成功', icon: 'success' });
     setTimeout(() => {
       Taro.navigateBack();

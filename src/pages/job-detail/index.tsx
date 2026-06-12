@@ -3,19 +3,20 @@ import { View, ScrollView } from '@tarojs/components';
 import Taro from '@tarojs/taro';
 import { useRouter } from '@tarojs/taro';
 import Avatar from '@/components/Avatar';
-import { mockJobs } from '@/data/jobs';
+import { useApp } from '@/store/AppContext';
 import styles from './index.module.scss';
 
 const JobDetailPage: React.FC = () => {
   const router = useRouter();
   const jobId = router.params.id || 'job001';
-  const job = mockJobs.find((j) => j.id === jobId) || mockJobs[0];
+  const { jobs, toggleFavorite, addApplication, applications } = useApp();
+  const job = jobs.find((j) => j.id === jobId) || jobs[0];
   const [isFavorite, setIsFavorite] = useState(job.isFavorite);
-  const [isApplied, setIsApplied] = useState(false);
+  const alreadyApplied = applications.some((a) => a.jobId === jobId);
 
   const handleFavorite = () => {
-    console.log('[JobDetail] 收藏/取消收藏:', jobId);
     setIsFavorite(!isFavorite);
+    toggleFavorite(jobId);
     Taro.showToast({
       title: isFavorite ? '已取消收藏' : '已收藏',
       icon: 'success',
@@ -23,19 +24,21 @@ const JobDetailPage: React.FC = () => {
   };
 
   const handleApply = () => {
-    console.log('[JobDetail] 投递简历:', jobId);
-    if (isApplied) {
+    if (alreadyApplied) {
       Taro.showToast({ title: '已投递过该职位', icon: 'none' });
       return;
     }
-    setIsApplied(true);
-    Taro.showToast({ title: '投递成功', icon: 'success' });
+    const success = addApplication(job);
+    if (success) {
+      Taro.showToast({ title: '投递成功', icon: 'success' });
+    } else {
+      Taro.showToast({ title: '已投递过该职位', icon: 'none' });
+    }
   };
 
   const handleChat = () => {
-    console.log('[JobDetail] 发起聊天:', job.storeName);
     Taro.navigateTo({
-      url: `/pages/chat-detail/index?id=${jobId}&name=${encodeURIComponent(job.storeName)}`,
+      url: `/pages/chat-detail/index?id=${jobId}&name=${encodeURIComponent(job.storeName)}&storeId=store_${job.id}`,
     });
   };
 
@@ -128,9 +131,9 @@ const JobDetailPage: React.FC = () => {
         <View
           className={styles.bottomBarApplyBtn}
           onClick={handleApply}
-          style={isApplied ? { background: '#C9CDD4', boxShadow: 'none' } : {}}
+          style={alreadyApplied ? { background: '#C9CDD4', boxShadow: 'none' } : {}}
         >
-          {isApplied ? '已投递' : '立即投递'}
+          {alreadyApplied ? '已投递' : '立即投递'}
         </View>
       </View>
     </View>

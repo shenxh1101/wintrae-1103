@@ -1,15 +1,15 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { View, Text, ScrollView } from '@tarojs/components';
 import Taro from '@tarojs/taro';
 import { usePullDownRefresh } from '@tarojs/taro';
 import MessageItem from '@/components/MessageItem';
 import EmptyState from '@/components/EmptyState';
-import { mockMessages } from '@/data/messages';
+import { useApp } from '@/store/AppContext';
 import type { Message } from '@/types';
 import styles from './index.module.scss';
 
 const MessagesPage: React.FC = () => {
-  const [messages] = useState<Message[]>(mockMessages);
+  const { messages, markAllRead, markChatRead } = useApp();
 
   const unreadTotal = messages.reduce((sum, m) => sum + m.unread, 0);
 
@@ -17,18 +17,22 @@ const MessagesPage: React.FC = () => {
   const systemMessages = messages.filter((m) => m.type !== 'chat');
 
   const handleMessageClick = (msg: Message) => {
-    console.log('[MessagesPage] 点击消息:', msg.id, msg.type);
-    if (msg.type === 'chat') {
+    if (msg.type === 'chat' && msg.storeId) {
+      markChatRead(msg.storeId);
       Taro.navigateTo({
-        url: `/pages/chat-detail/index?id=${msg.storeId || ''}&name=${encodeURIComponent(msg.title)}`,
+        url: `/pages/chat-detail/index?id=&name=${encodeURIComponent(msg.title)}&storeId=${msg.storeId}`,
       });
     } else {
       Taro.showToast({ title: '消息详情', icon: 'none' });
     }
   };
 
+  const handleMarkAllRead = () => {
+    markAllRead();
+    Taro.showToast({ title: '已全部标为已读', icon: 'success' });
+  };
+
   usePullDownRefresh(() => {
-    console.log('[MessagesPage] 下拉刷新');
     setTimeout(() => {
       Taro.stopPullDownRefresh();
     }, 800);
@@ -41,10 +45,7 @@ const MessagesPage: React.FC = () => {
         <View className={styles.headerActions}>
           <View
             className={styles.headerActionBtn}
-            onClick={() => {
-              console.log('[MessagesPage] 全部已读');
-              Taro.showToast({ title: '已全部标为已读', icon: 'success' });
-            }}
+            onClick={handleMarkAllRead}
           >
             ✅
           </View>
