@@ -1,0 +1,218 @@
+@use '@/styles/variables.scss' as *;
+
+.page {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background: $color-bg-page;
+}
+
+.chatHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: $spacing-md $spacing-lg;
+  background: $color-bg-card;
+  border-bottom: 1rpx solid $color-divider;
+}
+
+.chatHeaderHeaderInfo {
+  display: flex;
+  align-items: center;
+}
+
+.chatHeaderHeaderName {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  margin-left: $spacing-md;
+}
+
+.chatHeaderHeaderActions {
+  display: flex;
+  gap: $spacing-md;
+}
+
+.chatHeaderHeaderAction {
+  width: 64rpx;
+  height: 64rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: $color-bg-hover;
+  border-radius: $radius-round;
+  font-size: 28rpx;
+}
+
+.chatContent {
+  flex: 1;
+  padding: $spacing-lg $page-padding;
+  overflow-y: auto;
+}
+
+.messageWrap {
+  display: flex;
+  margin-bottom: $spacing-lg;
+
+  &-mine {
+    flex-direction: row-reverse;
+  }
+}
+
+.messageWrapAvatar {
+  flex-shrink: 0;
+}
+
+.messageWrapBubble {
+  max-width: 70%;
+  margin: 0 $spacing-md;
+  padding: $spacing-md $spacing-lg;
+  border-radius: $radius-lg;
+  font-size: $font-size-md;
+  line-height: 1.6;
+  word-break: break-all;
+}
+
+.messageWrapBubbleOther {
+  background: $color-bg-card;
+  color: $color-text-primary;
+  border-top-left-radius: $radius-xs;
+}
+
+.messageWrapBubbleMine {
+  background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
+  color: $color-text-white;
+  border-top-right-radius: $radius-xs;
+}
+
+.messageWrapTime {
+  text-align: center;
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+  margin: $spacing-md 0;
+}
+
+.quickReplies {
+  display: flex;
+  gap: $spacing-sm;
+  padding: $spacing-sm $page-padding;
+  padding-bottom: 0;
+  overflow-x: auto;
+  white-space: nowrap;
+}
+
+.quickRepliesQuickItem {
+  display: inline-flex;
+  align-items: center;
+  padding: 12rpx 24rpx;
+  background: $color-bg-card;
+  border-radius: $radius-button;
+  font-size: $font-size-sm;
+  color: $color-primary;
+  border: 1rpx solid $color-primary-bg;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.inputBar {
+  display: flex;
+  align-items: center;
+  padding: $spacing-md $spacing-lg;
+  padding-bottom: calc(env(safe-area-inset-bottom) + #{$spacing-md});
+  background: $color-bg-card;
+  border-top: 1rpx solid $color-divider;
+  gap: $spacing-sm;
+}
+
+.inputBarInputWrap {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  background: $color-bg-hover;
+  border-radius: $radius-button;
+  padding: 0 $spacing-lg;
+  height: $button-height-md;
+}
+
+.inputBarInput {
+  flex: 1;
+  font-size: $font-size-md;
+  color: $color-text-primary;
+  border: none;
+  background: transparent;
+  outline: none;
+}
+
+.inputBarActionBtn {
+  @include button-reset;
+  width: 72rpx;
+  height: 72rpx;
+  border-radius: $radius-round;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32rpx;
+  background: $color-bg-hover;
+  color: $color-text-secondary;
+  transition: all $transition-fast;
+
+  &:active {
+    opacity: 0.8;
+  }
+}
+
+.inputBarSendBtn {
+  @include button-reset;
+  padding: 0 $spacing-lg;
+  height: $button-height-md;
+  background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
+  color: $color-text-white;
+  border-radius: $radius-button;
+  font-size: $font-size-md;
+  font-weight: $font-weight-medium;
+}
+
+.interviewCard {
+  background: $color-primary-bg;
+  border-radius: $radius-md;
+  padding: $spacing-md;
+  margin-top: $spacing-sm;
+}
+
+.interviewCardInterviewTitle {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-semibold;
+  color: $color-primary;
+  margin-bottom: 8rpx;
+}
+
+.interviewCardInterviewInfo {
+  font-size: $font-size-xs;
+  color: $color-text-secondary;
+}
+
+.interviewCardInterviewActions {
+  display: flex;
+  gap: $spacing-sm;
+  margin-top: $spacing-md;
+}
+
+.interviewCardInterviewBtn {
+  @include button-reset;
+  flex: 1;
+  height: 56rpx;
+  border-radius: $radius-button;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-medium;
+}
+
+.interviewCardInterviewBtnAccept {
+  background: $color-primary;
+  color: $color-text-white;
+}
+
+.interviewCardInterviewBtnReject {
+  background: $color-bg-card;
+  color: $color-text-secondary;
+  border: 1rpx solid $color-border;
+}

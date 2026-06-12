@@ -1,0 +1,132 @@
+@use '@/styles/variables.scss' as *;
+
+.applicationItem {
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+  margin-bottom: $spacing-md;
+  box-shadow: $shadow-card;
+  transition: all $transition-base;
+
+  &:active {
+    opacity: 0.95;
+  }
+
+  &Header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: $spacing-md;
+  }
+
+  &JobInfo {
+    flex: 1;
+    overflow: hidden;
+  }
+
+  &JobTitle {
+    font-size: $font-size-lg;
+    font-weight: $font-weight-semibold;
+    color: $color-text-primary;
+    @include text-ellipsis;
+  }
+
+  &Salary {
+    font-size: $font-size-md;
+    color: $color-salary;
+    font-weight: $font-weight-medium;
+    margin-top: 4rpx;
+  }
+
+  &Timeline {
+    position: relative;
+    padding-left: $spacing-lg;
+    margin-top: $spacing-md;
+  }
+
+  &Timeline::before {
+    content: '';
+    position: absolute;
+    left: 8rpx;
+    top: 8rpx;
+    bottom: 8rpx;
+    width: 2rpx;
+    background: $color-border;
+  }
+
+  &TimelineItem {
+    position: relative;
+    padding-bottom: $spacing-md;
+
+    &:last-child {
+      padding-bottom: 0;
+    }
+  }
+
+  &TimelineDot {
+    position: absolute;
+    left: -32rpx;
+    top: 6rpx;
+    width: 18rpx;
+    height: 18rpx;
+    border-radius: $radius-round;
+    background: $color-border;
+    border: 4rpx solid $color-bg-card;
+
+    &-done {
+      background: $color-success;
+    }
+
+    &-current {
+      background: $color-primary;
+      box-shadow: 0 0 0 6rpx $color-primary-bg;
+    }
+  }
+
+  &TimelineContent {
+    font-size: $font-size-sm;
+  }
+
+  &TimelineTitle {
+    color: $color-text-primary;
+    font-weight: $font-weight-medium;
+    margin-bottom: 4rpx;
+  }
+
+  &TimelineTime {
+    color: $color-text-tertiary;
+    font-size: $font-size-xs;
+  }
+
+  &TimelineNote {
+    color: $color-text-secondary;
+    font-size: $font-size-xs;
+    margin-top: 4rpx;
+    padding: $spacing-sm;
+    background: $color-bg-hover;
+    border-radius: $radius-sm;
+    margin-top: 8rpx;
+  }
+
+  &Footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: $spacing-md;
+    border-top: 1rpx solid $color-divider;
+    margin-top: $spacing-sm;
+  }
+
+  &StoreName {
+    font-size: $font-size-sm;
+    color: $color-text-secondary;
+    @include text-ellipsis;
+    flex: 1;
+  }
+
+  &ApplyTime {
+    font-size: $font-size-xs;
+    color: $color-text-tertiary;
+    white-space: nowrap;
+  }
+}

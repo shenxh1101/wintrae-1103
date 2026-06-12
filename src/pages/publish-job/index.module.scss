@@ -1,0 +1,259 @@
+@use '@/styles/variables.scss' as *;
+
+.page {
+  min-height: 100vh;
+  padding: $spacing-md $page-padding;
+  padding-bottom: calc(env(safe-area-inset-bottom) + 160rpx);
+  background: $color-bg-page;
+}
+
+.section {
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+  margin-bottom: $spacing-md;
+  box-shadow: $shadow-card;
+}
+
+.sectionSectionTitle {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  margin-bottom: $spacing-md;
+}
+
+.formItem {
+  display: flex;
+  align-items: flex-start;
+  padding: $spacing-md 0;
+  border-bottom: 1rpx solid $color-divider;
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.formItemLabel {
+  width: 140rpx;
+  font-size: $font-size-md;
+  color: $color-text-secondary;
+  flex-shrink: 0;
+  padding-top: 4rpx;
+}
+
+.formItemLabelRequired {
+  color: $color-error;
+  margin-right: 4rpx;
+}
+
+.formItemContent {
+  flex: 1;
+}
+
+.formItemInput {
+  width: 100%;
+  font-size: $font-size-md;
+  color: $color-text-primary;
+}
+
+.formItemInputPlaceholder {
+  color: $color-text-disabled;
+}
+
+.formItemTextarea {
+  width: 100%;
+  font-size: $font-size-md;
+  color: $color-text-primary;
+  min-height: 160rpx;
+  line-height: 1.6;
+}
+
+.salaryRange {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+}
+
+.salaryRangeSalaryInput {
+  flex: 1;
+  height: 72rpx;
+  padding: 0 $spacing-md;
+  background: $color-bg-hover;
+  border-radius: $radius-md;
+  font-size: $font-size-md;
+  color: $color-text-primary;
+  text-align: center;
+}
+
+.salaryRangeSalaryUnit {
+  font-size: $font-size-md;
+  color: $color-text-secondary;
+}
+
+.optionGrid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-sm;
+}
+
+.optionGridOptionItem {
+  padding: 12rpx 28rpx;
+  background: $color-bg-hover;
+  border-radius: $radius-button;
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  transition: all $transition-fast;
+
+  &Active {
+    background: $color-primary-bg;
+    color: $color-primary;
+    font-weight: $font-weight-medium;
+  }
+}
+
+.switchRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: $spacing-md 0;
+  border-bottom: 1rpx solid $color-divider;
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.switchRowSwitchLabel {
+  font-size: $font-size-md;
+  color: $color-text-secondary;
+}
+
+.switchRowSwitch {
+  width: 96rpx;
+  height: 56rpx;
+  border-radius: $radius-round;
+  background: $color-bg-hover;
+  position: relative;
+  transition: all $transition-fast;
+
+  &Active {
+    background: $color-primary;
+  }
+}
+
+.switchRowSwitchDot {
+  position: absolute;
+  top: 6rpx;
+  left: 6rpx;
+  width: 44rpx;
+  height: 44rpx;
+  background: #fff;
+  border-radius: $radius-round;
+  transition: all $transition-fast;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.1);
+}
+
+.switchRowSwitchActive .switchRowSwitchDot {
+  left: 46rpx;
+}
+
+.headcountRow {
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+}
+
+.headcountRowHeadcountBtn {
+  width: 64rpx;
+  height: 64rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: $color-bg-hover;
+  border-radius: $radius-sm;
+  font-size: $font-size-lg;
+  color: $color-text-secondary;
+  transition: all $transition-fast;
+
+  &:active {
+    opacity: 0.8;
+  }
+}
+
+.headcountRowHeadcountNum {
+  width: 80rpx;
+  text-align: center;
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+}
+
+.tagInputRow {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  margin-top: $spacing-sm;
+}
+
+.tagInputRowTagInput {
+  flex: 1;
+  height: 72rpx;
+  padding: 0 $spacing-md;
+  background: $color-bg-hover;
+  border-radius: $radius-md;
+  font-size: $font-size-sm;
+  color: $color-text-primary;
+}
+
+.tagInputRowTagAddBtn {
+  @include button-reset;
+  height: 72rpx;
+  padding: 0 $spacing-lg;
+  background: $color-primary-bg;
+  color: $color-primary;
+  border-radius: $radius-md;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+}
+
+.tagsList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-sm;
+  margin-top: $spacing-sm;
+}
+
+.tagsListTagItem {
+  display: inline-flex;
+  align-items: center;
+  gap: 8rpx;
+  padding: 8rpx 16rpx 8rpx 20rpx;
+  background: $color-primary-bg;
+  color: $color-primary;
+  font-size: $font-size-xs;
+  border-radius: $radius-sm;
+}
+
+.tagsListTagRemove {
+  font-size: $font-size-sm;
+  opacity: 0.7;
+}
+
+.publishBtn {
+  @include button-reset;
+  width: 100%;
+  height: $button-height-lg;
+  background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
+  color: $color-text-white;
+  border-radius: $radius-button;
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  margin-top: $spacing-md;
+  box-shadow: 0 4rpx 16rpx rgba(255, 107, 53, 0.3);
+  transition: all $transition-fast;
+
+  &:active {
+    transform: scale(0.98);
+    opacity: 0.9;
+  }
+}

@@ -1,0 +1,236 @@
+@use '@/styles/variables.scss' as *;
+
+.page {
+  min-height: 100vh;
+  padding: 0 $page-padding;
+  padding-bottom: calc(env(safe-area-inset-bottom) + 120rpx);
+}
+
+.profileCard {
+  background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
+  border-radius: $radius-lg;
+  padding: $spacing-xl $spacing-lg;
+  margin: $spacing-md 0;
+  box-shadow: $shadow-card;
+  display: flex;
+  align-items: center;
+  color: $color-text-white;
+}
+
+.profileCardProfileInfo {
+  flex: 1;
+  margin-left: $spacing-lg;
+  overflow: hidden;
+}
+
+.profileCardProfileName {
+  font-size: $font-size-xxl;
+  font-weight: $font-weight-bold;
+}
+
+.profileCardProfileDesc {
+  font-size: $font-size-sm;
+  opacity: 0.9;
+  margin-top: 8rpx;
+  @include text-ellipsis;
+}
+
+.profileCardProfileBadge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4rpx 16rpx;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: $radius-button;
+  font-size: $font-size-xs;
+  margin-top: 12rpx;
+}
+
+.profileCardEditBtn {
+  padding: 12rpx 24rpx;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: $radius-button;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+}
+
+.sectionCard {
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+  margin-bottom: $spacing-md;
+  box-shadow: $shadow-card;
+}
+
+.sectionTitle {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  margin-bottom: $spacing-md;
+}
+
+.certItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: $spacing-md 0;
+  border-bottom: 1rpx solid $color-divider;
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.certItemCertInfo {
+  flex: 1;
+}
+
+.certItemCertName {
+  font-size: $font-size-md;
+  color: $color-text-primary;
+  font-weight: $font-weight-medium;
+}
+
+.certItemCertDate {
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+  margin-top: 4rpx;
+}
+
+.certItemCertWarning {
+  display: inline-flex;
+  align-items: center;
+  padding: 4rpx 16rpx;
+  background: $color-error-bg;
+  color: $color-error;
+  font-size: $font-size-xs;
+  border-radius: $radius-sm;
+  font-weight: $font-weight-medium;
+}
+
+.certItemCertNormal {
+  font-size: $font-size-xs;
+  color: $color-success;
+  font-weight: $font-weight-medium;
+}
+
+.timeGrid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: $spacing-xs;
+  margin-top: $spacing-md;
+}
+
+.timeGridTimeDay {
+  text-align: center;
+  padding: $spacing-sm $spacing-xs;
+  background: $color-bg-hover;
+  border-radius: $radius-sm;
+  font-size: $font-size-xs;
+  color: $color-text-secondary;
+}
+
+.timeGridTimeDayAvailable {
+  background: $color-success-bg;
+  color: $color-success;
+  font-weight: $font-weight-medium;
+}
+
+.menuList {
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  overflow: hidden;
+  box-shadow: $shadow-card;
+  margin-bottom: $spacing-md;
+}
+
+.menuListMenuItem {
+  display: flex;
+  align-items: center;
+  padding: $spacing-lg;
+  border-bottom: 1rpx solid $color-divider;
+  transition: all $transition-fast;
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  &:active {
+    background: $color-bg-hover;
+  }
+}
+
+.menuListMenuIcon {
+  width: 64rpx;
+  height: 64rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: $color-primary-bg;
+  border-radius: $radius-md;
+  font-size: 32rpx;
+  margin-right: $spacing-md;
+}
+
+.menuListMenuLabel {
+  flex: 1;
+  font-size: $font-size-md;
+  color: $color-text-primary;
+}
+
+.menuListMenuArrow {
+  font-size: $font-size-md;
+  color: $color-text-tertiary;
+}
+
+.menuListMenuBadge {
+  padding: 4rpx 16rpx;
+  background: $color-error;
+  color: $color-text-white;
+  border-radius: $radius-round;
+  font-size: 20rpx;
+  font-weight: $font-weight-bold;
+  margin-right: $spacing-sm;
+}
+
+.addBtn {
+  @include button-reset;
+  width: 100%;
+  height: $button-height-md;
+  background: $color-bg-hover;
+  color: $color-text-secondary;
+  border-radius: $radius-md;
+  font-size: $font-size-sm;
+  border: 1rpx dashed $color-border;
+  transition: all $transition-fast;
+
+  &:active {
+    opacity: 0.8;
+  }
+}
+
+.expiringBanner {
+  display: flex;
+  align-items: center;
+  background: $color-error-bg;
+  border-radius: $radius-lg;
+  padding: $spacing-md $spacing-lg;
+  margin-bottom: $spacing-md;
+  gap: $spacing-sm;
+}
+
+.expiringBannerBannerIcon {
+  font-size: $font-size-xl;
+}
+
+.expiringBannerBannerText {
+  flex: 1;
+  font-size: $font-size-sm;
+  color: $color-error;
+  font-weight: $font-weight-medium;
+}
+
+.expiringBannerBannerAction {
+  font-size: $font-size-sm;
+  color: $color-primary;
+  font-weight: $font-weight-medium;
+}

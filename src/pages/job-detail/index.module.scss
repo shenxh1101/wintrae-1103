@@ -1,0 +1,178 @@
+@use '@/styles/variables.scss' as *;
+
+.page {
+  min-height: 100vh;
+  padding-bottom: calc(env(safe-area-inset-bottom) + 160rpx);
+  background: $color-bg-page;
+}
+
+.headerCard {
+  background: $color-bg-card;
+  padding: $spacing-xl $spacing-lg;
+  box-shadow: $shadow-card;
+}
+
+.headerCardTitle {
+  font-size: $font-size-xxl;
+  font-weight: $font-weight-bold;
+  color: $color-text-primary;
+  margin-bottom: $spacing-sm;
+}
+
+.headerCardSalary {
+  font-size: $font-size-xl;
+  font-weight: $font-weight-bold;
+  color: $color-salary;
+}
+
+.headerCardMeta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-md;
+  margin-top: $spacing-lg;
+}
+
+.headerCardMetaItem {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  display: inline-flex;
+  align-items: center;
+  gap: 4rpx;
+}
+
+.headerCardTags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-sm;
+  margin-top: $spacing-lg;
+}
+
+.headerCardTag {
+  padding: 8rpx 20rpx;
+  background: $color-primary-bg;
+  color: $color-primary;
+  font-size: $font-size-xs;
+  border-radius: $radius-sm;
+}
+
+.sectionCard {
+  background: $color-bg-card;
+  padding: $spacing-lg;
+  margin-top: $spacing-md;
+}
+
+.sectionCardSectionTitle {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  margin-bottom: $spacing-md;
+}
+
+.sectionCardSectionContent {
+  font-size: $font-size-md;
+  color: $color-text-secondary;
+  line-height: 1.8;
+}
+
+.sectionCardListItem {
+  font-size: $font-size-md;
+  color: $color-text-secondary;
+  padding: $spacing-sm 0;
+  padding-left: $spacing-md;
+  position: relative;
+
+  &::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 8rpx;
+    height: 8rpx;
+    background: $color-primary;
+    border-radius: $radius-round;
+  }
+}
+
+.storeCard {
+  display: flex;
+  align-items: center;
+  background: $color-bg-card;
+  padding: $spacing-lg;
+  margin-top: $spacing-md;
+}
+
+.storeCardStoreInfo {
+  flex: 1;
+  margin-left: $spacing-md;
+  overflow: hidden;
+}
+
+.storeCardStoreName {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  @include text-ellipsis;
+}
+
+.storeCardStoreType {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  margin-top: 4rpx;
+}
+
+.storeCardStoreAddress {
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+  margin-top: 4rpx;
+  @include text-ellipsis;
+}
+
+.bottomBar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  padding: $spacing-md $spacing-lg;
+  padding-bottom: calc(env(safe-area-inset-bottom) + #{$spacing-md});
+  background: $color-bg-card;
+  box-shadow: 0 -4rpx 16rpx rgba(0, 0, 0, 0.06);
+  gap: $spacing-md;
+}
+
+.bottomBarFavoriteBtn {
+  @include button-reset;
+  width: 96rpx;
+  height: 96rpx;
+  border-radius: $radius-lg;
+  background: $color-bg-hover;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 44rpx;
+}
+
+.bottomBarChatBtn {
+  @include button-reset;
+  height: $button-height-lg;
+  padding: 0 $spacing-xl;
+  border-radius: $radius-button;
+  background: $color-secondary-bg;
+  color: $color-secondary;
+  font-size: $font-size-md;
+  font-weight: $font-weight-medium;
+}
+
+.bottomBarApplyBtn {
+  @include button-reset;
+  flex: 1;
+  height: $button-height-lg;
+  background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
+  color: $color-text-white;
+  border-radius: $radius-button;
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  box-shadow: 0 4rpx 16rpx rgba(255, 107, 53, 0.3);
+}

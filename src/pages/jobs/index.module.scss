@@ -1,0 +1,92 @@
+@use '@/styles/variables.scss' as *;
+
+.page {
+  min-height: 100vh;
+  padding: 0 $page-padding;
+  padding-bottom: calc(env(safe-area-inset-bottom) + 120rpx);
+}
+
+.header {
+  padding: $spacing-md 0;
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+
+  &Search {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    background: $color-bg-card;
+    border-radius: $radius-button;
+    padding: 0 $spacing-lg;
+    height: $button-height-md;
+    box-shadow: $shadow-card;
+  }
+
+  &SearchIcon {
+    font-size: $font-size-lg;
+    color: $color-text-tertiary;
+    margin-right: $spacing-sm;
+  }
+
+  &SearchInput {
+    flex: 1;
+    font-size: $font-size-md;
+    color: $color-text-primary;
+    border: none;
+    background: transparent;
+    outline: none;
+  }
+
+  &Location {
+    display: inline-flex;
+    align-items: center;
+    background: $color-bg-card;
+    border-radius: $radius-button;
+    padding: 0 $spacing-md;
+    height: $button-height-md;
+    box-shadow: $shadow-card;
+    font-size: $font-size-sm;
+    color: $color-text-secondary;
+    white-space: nowrap;
+  }
+}
+
+.filterBar {
+  margin-bottom: $spacing-md;
+}
+
+.quickTags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-sm;
+  margin-bottom: $spacing-md;
+
+  &Tag {
+    display: inline-flex;
+    align-items: center;
+    padding: 12rpx 24rpx;
+    background: $color-bg-card;
+    border-radius: $radius-button;
+    font-size: $font-size-sm;
+    color: $color-text-secondary;
+    box-shadow: $shadow-card;
+    transition: all $transition-fast;
+
+    &-active {
+      background: $color-primary;
+      color: $color-text-white;
+    }
+  }
+}
+
+.jobList {
+  padding-bottom: $spacing-lg;
+}
+
+.loading {
+  text-align: center;
+  padding: $spacing-xl;
+  color: $color-text-tertiary;
+  font-size: $font-size-sm;
+}

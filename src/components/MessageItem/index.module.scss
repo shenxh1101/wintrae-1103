@@ -1,0 +1,84 @@
+@use '@/styles/variables.scss' as *;
+
+.messageItem {
+  display: flex;
+  align-items: center;
+  padding: $spacing-lg;
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  margin-bottom: $spacing-sm;
+  box-shadow: $shadow-card;
+  transition: all $transition-base;
+
+  &:active {
+    opacity: 0.9;
+    background: $color-bg-hover;
+  }
+
+  &AvatarWrap {
+    position: relative;
+    flex-shrink: 0;
+  }
+
+  &Unread {
+    position: absolute;
+    top: -8rpx;
+    right: -8rpx;
+    min-width: 32rpx;
+    height: 32rpx;
+    padding: 0 8rpx;
+    background: $color-error;
+    color: $color-text-white;
+    font-size: 20rpx;
+    font-weight: $font-weight-bold;
+    border-radius: $radius-round;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  &Content {
+    flex: 1;
+    margin-left: $spacing-md;
+    overflow: hidden;
+  }
+
+  &Header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8rpx;
+  }
+
+  &Title {
+    font-size: $font-size-md;
+    font-weight: $font-weight-semibold;
+    color: $color-text-primary;
+    @include text-ellipsis;
+    flex: 1;
+    margin-right: $spacing-sm;
+  }
+
+  &Time {
+    font-size: $font-size-xs;
+    color: $color-text-tertiary;
+    white-space: nowrap;
+  }
+
+  &Preview {
+    font-size: $font-size-sm;
+    color: $color-text-secondary;
+    @include text-ellipsis;
+  }
+
+  &TypeTag {
+    display: inline-flex;
+    align-items: center;
+    padding: 2rpx 12rpx;
+    background: $color-primary-bg;
+    color: $color-primary;
+    font-size: 20rpx;
+    border-radius: $radius-xs;
+    margin-right: $spacing-xs;
+  }
+}

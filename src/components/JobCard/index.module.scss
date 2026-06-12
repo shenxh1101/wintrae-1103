@@ -1,0 +1,123 @@
+@use '@/styles/variables.scss' as *;
+
+.jobCard {
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+  margin-bottom: $spacing-md;
+  box-shadow: $shadow-card;
+  transition: all $transition-base;
+
+  &:active {
+    transform: scale(0.99);
+    opacity: 0.95;
+  }
+
+  &Header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: $spacing-md;
+  }
+
+  &Title {
+    font-size: $font-size-lg;
+    font-weight: $font-weight-semibold;
+    color: $color-text-primary;
+    flex: 1;
+    margin-right: $spacing-md;
+    @include text-ellipsis;
+  }
+
+  &Salary {
+    font-size: $font-size-lg;
+    font-weight: $font-weight-bold;
+    color: $color-salary;
+    white-space: nowrap;
+  }
+
+  &Meta {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: $spacing-sm;
+    margin-bottom: $spacing-md;
+  }
+
+  &MetaItem {
+    display: inline-flex;
+    align-items: center;
+    font-size: $font-size-sm;
+    color: $color-text-secondary;
+    white-space: nowrap;
+  }
+
+  &Store {
+    display: flex;
+    align-items: center;
+    padding-top: $spacing-md;
+    border-top: 1rpx solid $color-divider;
+  }
+
+  &StoreInfo {
+    flex: 1;
+    margin-left: $spacing-md;
+    overflow: hidden;
+  }
+
+  &StoreName {
+    font-size: $font-size-md;
+    color: $color-text-primary;
+    font-weight: $font-weight-medium;
+    @include text-ellipsis;
+  }
+
+  &StoreAddress {
+    font-size: $font-size-xs;
+    color: $color-text-tertiary;
+    margin-top: 4rpx;
+    @include text-ellipsis;
+  }
+
+  &Favorite {
+    width: 64rpx;
+    height: 64rpx;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: $radius-round;
+    background: $color-bg-hover;
+    transition: all $transition-base;
+
+    &-active {
+      background: $color-primary-bg;
+    }
+  }
+
+  &FavoriteIcon {
+    font-size: 32rpx;
+  }
+
+  &Tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $spacing-xs;
+    margin-bottom: $spacing-md;
+  }
+
+  &Tag {
+    display: inline-flex;
+    align-items: center;
+    padding: 4rpx 16rpx;
+    background: $color-primary-bg;
+    color: $color-primary;
+    font-size: $font-size-xs;
+    border-radius: $radius-sm;
+    white-space: nowrap;
+  }
+
+  &Stats {
+    font-size: $font-size-xs;
+    color: $color-text-tertiary;
+  }
+}
