@@ -1,18 +1,27 @@
 import React, { useState } from 'react';
-import { View, ScrollView } from '@tarojs/components';
+import { View, ScrollView, Text } from '@tarojs/components';
 import Taro from '@tarojs/taro';
 import { useRouter } from '@tarojs/taro';
 import Avatar from '@/components/Avatar';
 import { useApp } from '@/store/AppContext';
+import classnames from 'classnames';
 import styles from './index.module.scss';
 
 const JobDetailPage: React.FC = () => {
   const router = useRouter();
   const jobId = router.params.id || 'job001';
-  const { jobs, toggleFavorite, addApplication, applications } = useApp();
-  const job = jobs.find((j) => j.id === jobId) || jobs[0];
+  const { jobsWithMatch, toggleFavorite, addApplication, applications, getStoreChatId } = useApp();
+  const job = jobsWithMatch.find((j) => j.id === jobId) || jobsWithMatch[0];
   const [isFavorite, setIsFavorite] = useState(job.isFavorite);
   const alreadyApplied = applications.some((a) => a.jobId === jobId);
+  const isPaused = job.status === 'paused';
+
+  const matchColor =
+    job.matchScore && job.matchScore >= 80
+      ? '#00B42A'
+      : job.matchScore && job.matchScore >= 60
+      ? '#FF7D00'
+      : '#86909C';
 
   const handleFavorite = () => {
     setIsFavorite(!isFavorite);
@@ -24,6 +33,10 @@ const JobDetailPage: React.FC = () => {
   };
 
   const handleApply = () => {
+    if (isPaused) {
+      Taro.showToast({ title: '该职位已暂停招聘', icon: 'none' });
+      return;
+    }
     if (alreadyApplied) {
       Taro.showToast({ title: '已投递过该职位', icon: 'none' });
       return;
@@ -37,8 +50,9 @@ const JobDetailPage: React.FC = () => {
   };
 
   const handleChat = () => {
+    const chatId = getStoreChatId(jobId);
     Taro.navigateTo({
-      url: `/pages/chat-detail/index?id=${jobId}&name=${encodeURIComponent(job.storeName)}&storeId=store_${job.id}`,
+      url: `/pages/chat-detail/index?id=${jobId}&name=${encodeURIComponent(job.storeName)}&storeId=${chatId}`,
     });
   };
 
@@ -46,8 +60,36 @@ const JobDetailPage: React.FC = () => {
     <View className={styles.page}>
       <ScrollView scrollY>
         <View className={styles.headerCard}>
-          <View className={styles.headerCardTitle}>{job.title}</View>
-          <View className={styles.headerCardSalary}>{job.salary} 元/月</View>
+          <View style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <View className={styles.headerCardTitle}>{job.title}</View>
+            {isPaused && (
+              <View
+                style={{
+                  fontSize: 24,
+                  color: '#F53F3F',
+                  background: 'rgba(245, 63, 63, 0.1)',
+                  padding: '4rpx 16rpx',
+                  borderRadius: 8,
+                }}
+              >
+                已暂停招聘
+              </View>
+            )}
+          </View>
+          <View style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 8 }}>
+            <View className={styles.headerCardSalary}>{job.salary} 元/月</View>
+            {typeof job.matchScore === 'number' && (
+              <View
+                style={{
+                  fontSize: 30,
+                  fontWeight: 600,
+                  color: matchColor,
+                }}
+              >
+                匹配度 {job.matchScore}%
+              </View>
+            )}
+          </View>
 
           <View className={styles.headerCardMeta}>
             <View className={styles.headerCardMetaItem}>📍 {job.distance}</View>
@@ -78,6 +120,17 @@ const JobDetailPage: React.FC = () => {
             ))}
           </View>
         </View>
+
+        {job.matchReasons && job.matchReasons.length > 0 && (
+          <View className={styles.sectionCard}>
+            <View className={styles.sectionCardSectionTitle}>推荐理由</View>
+            {job.matchReasons.map((reason, idx) => (
+              <View key={idx} className={styles.sectionCardListItem}>
+                ✅ {reason}
+              </View>
+            ))}
+          </View>
+        )}
 
         <View className={styles.sectionCard}>
           <View className={styles.sectionCardSectionTitle}>职位描述</View>
@@ -125,15 +178,17 @@ const JobDetailPage: React.FC = () => {
         >
           {isFavorite ? '♥' : '♡'}
         </View>
-        <View className={styles.bottomBarChatBtn} onClick={handleChat}>
+        <View
+          className={classnames(styles.bottomBarChatBtn, isPaused && styles.bottomBarBtnDisabled)}
+          onClick={isPaused ? undefined : handleChat}
+        >
           聊一聊
         </View>
         <View
-          className={styles.bottomBarApplyBtn}
+          className={classnames(styles.bottomBarApplyBtn, (isPaused || alreadyApplied) && styles.bottomBarBtnDisabled)}
           onClick={handleApply}
-          style={alreadyApplied ? { background: '#C9CDD4', boxShadow: 'none' } : {}}
         >
-          {alreadyApplied ? '已投递' : '立即投递'}
+          {isPaused ? '已暂停' : alreadyApplied ? '已投递' : '立即投递'}
         </View>
       </View>
     </View>

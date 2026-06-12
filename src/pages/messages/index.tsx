@@ -1,15 +1,17 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, ScrollView } from '@tarojs/components';
 import Taro from '@tarojs/taro';
 import { usePullDownRefresh } from '@tarojs/taro';
 import MessageItem from '@/components/MessageItem';
 import EmptyState from '@/components/EmptyState';
-import { useApp } from '@/store/AppContext';
+import { useApp, methodLabelMap } from '@/store/AppContext';
 import type { Message } from '@/types';
 import styles from './index.module.scss';
+import classnames from 'classnames';
 
 const MessagesPage: React.FC = () => {
-  const { messages, markAllRead, markChatRead } = useApp();
+  const { messages, markAllRead, markChatRead, getStoreChatId, respondInterview } = useApp();
+  const [, forceUpdate] = useState(0);
 
   const unreadTotal = messages.reduce((sum, m) => sum + m.unread, 0);
 
@@ -19,12 +21,29 @@ const MessagesPage: React.FC = () => {
   const handleMessageClick = (msg: Message) => {
     if (msg.type === 'chat' && msg.storeId) {
       markChatRead(msg.storeId);
+      const chatId = getStoreChatId(msg.storeId);
       Taro.navigateTo({
-        url: `/pages/chat-detail/index?id=&name=${encodeURIComponent(msg.title)}&storeId=${msg.storeId}`,
+        url: `/pages/chat-detail/index?id=${chatId}&name=${encodeURIComponent(msg.title)}&storeId=${chatId}`,
+      });
+    } else if (msg.type === 'interview' && msg.storeId) {
+      const chatId = getStoreChatId(msg.storeId);
+      Taro.navigateTo({
+        url: `/pages/chat-detail/index?id=${chatId}&name=${encodeURIComponent(msg.title)}&storeId=${chatId}&applicationId=${msg.applicationId || ''}`,
       });
     } else {
       Taro.showToast({ title: '消息详情', icon: 'none' });
     }
+  };
+
+  const handleInterviewRespond = (msg: Message, accepted: boolean) => {
+    if (msg.applicationId) {
+      respondInterview(msg.applicationId, accepted ? 'accepted' : 'rejected');
+    }
+    forceUpdate((x) => x + 1);
+    Taro.showToast({
+      title: accepted ? '已接受面试' : '已婉拒',
+      icon: 'success',
+    });
   };
 
   const handleMarkAllRead = () => {
@@ -66,11 +85,70 @@ const MessagesPage: React.FC = () => {
           <>
             <Text className={styles.sectionTitle}>通知</Text>
             {systemMessages.map((msg) => (
-              <MessageItem
-                key={msg.id}
-                message={msg}
-                onClick={() => handleMessageClick(msg)}
-              />
+              <View key={msg.id}>
+                <MessageItem
+                  message={msg}
+                  onClick={() => handleMessageClick(msg)}
+                />
+                {msg.type === 'interview' && msg.interviewInfo && !msg.interviewInfo.result && (
+                  <View
+                    style={{
+                      padding: '0 32rpx 24rpx',
+                      marginTop: -8,
+                      display: 'flex',
+                      gap: 16,
+                      justifyContent: 'flex-end',
+                    }}
+                  >
+                    <View
+                      onClick={(e) => {
+                        e.stopPropagation?.();
+                        handleInterviewRespond(msg, false);
+                      }}
+                      style={{
+                        padding: '16rpx 40rpx',
+                        background: '#F2F3F5',
+                        color: '#4E5969',
+                        borderRadius: 40,
+                        fontSize: 26,
+                        fontWeight: 500,
+                      }}
+                    >
+                      婉拒
+                    </View>
+                    <View
+                      onClick={(e) => {
+                        e.stopPropagation?.();
+                        handleInterviewRespond(msg, true);
+                      }}
+                      style={{
+                        padding: '16rpx 40rpx',
+                        background: 'linear-gradient(135deg, #FF6B35 0%, #FF8A50 100%)',
+                        color: '#fff',
+                        borderRadius: 40,
+                        fontSize: 26,
+                        fontWeight: 600,
+                      }}
+                    >
+                      接受
+                    </View>
+                  </View>
+                )}
+                {msg.type === 'interview' && msg.interviewInfo && msg.interviewInfo.result && (
+                  <View
+                    style={{
+                      padding: '0 32rpx 24rpx',
+                      marginTop: -8,
+                      textAlign: 'right',
+                      fontSize: 26,
+                      color: msg.interviewInfo.result === 'accepted' ? '#00B42A' : '#F53F3F',
+                      fontWeight: 500,
+                    }}
+                  >
+                    {msg.interviewInfo.result === 'accepted' ? '✓ 已接受' : '✗ 已婉拒'}
+                  </View>
+                )}
+              </View>
             ))}
           </>
         )}

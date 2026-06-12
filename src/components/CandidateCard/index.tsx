@@ -3,6 +3,7 @@ import { View, Text } from '@tarojs/components';
 import Taro from '@tarojs/taro';
 import Avatar from '@/components/Avatar';
 import StatusTag from '@/components/StatusTag';
+import { useApp } from '@/store/AppContext';
 import type { Candidate } from '@/types';
 import { candidateStatusLabels } from '@/data/candidates';
 import styles from './index.module.scss';
@@ -19,10 +20,10 @@ const CandidateCard: React.FC<CandidateCardProps> = ({
   onView,
   onInterview,
 }) => {
+  const { getStoreChatId, currentStoreId } = useApp();
   const statusLabel = candidateStatusLabels[candidate.status];
 
   const handleView = () => {
-    console.log('[CandidateCard] 查看候选人:', candidate.id);
     Taro.navigateTo({
       url: `/pages/candidate-detail/index?id=${candidate.id}`,
     });
@@ -31,12 +32,19 @@ const CandidateCard: React.FC<CandidateCardProps> = ({
 
   const handleInterview = (e: any) => {
     e.stopPropagation?.();
-    console.log('[CandidateCard] 发起面试:', candidate.id);
     Taro.showToast({
       title: '已发送面试邀约',
       icon: 'success',
     });
     onInterview?.(candidate.id);
+  };
+
+  const handleChat = (e: any) => {
+    e.stopPropagation?.();
+    const chatId = getStoreChatId(currentStoreId);
+    Taro.navigateTo({
+      url: `/pages/chat-detail/index?id=${chatId}&name=${encodeURIComponent(candidate.name)}&storeId=${chatId}`,
+    });
   };
 
   return (
@@ -96,11 +104,7 @@ const CandidateCard: React.FC<CandidateCardProps> = ({
               styles.candidateCardActionBtn,
               styles.candidateCardActionBtnOutline
             )}
-            onClick={(e) => {
-              e.stopPropagation?.();
-              console.log('[CandidateCard] 发起聊天');
-              Taro.navigateTo({ url: '/pages/chat-detail/index' });
-            }}
+            onClick={handleChat}
           >
             发起聊天
           </View>

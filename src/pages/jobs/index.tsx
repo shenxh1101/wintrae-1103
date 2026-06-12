@@ -20,7 +20,7 @@ const sortOptions = [
 ];
 
 const JobsPage: React.FC = () => {
-  const { jobs, toggleFavorite } = useApp();
+  const { jobsWithMatch, toggleFavorite } = useApp();
   const [searchText, setSearchText] = useState('');
   const [activeTags, setActiveTags] = useState<string[]>([]);
   const [activeFilters, setActiveFilters] = useState<Record<string, string>>({});
@@ -89,7 +89,7 @@ const JobsPage: React.FC = () => {
   };
 
   const handleFavorite = (jobId: string) => {
-    const job = jobs.find((j) => j.id === jobId);
+    const job = jobsWithMatch.find((j) => j.id === jobId);
     Taro.showToast({
       title: job?.isFavorite ? '已取消收藏' : '已收藏',
       icon: 'success',
@@ -98,7 +98,7 @@ const JobsPage: React.FC = () => {
   };
 
   const sortedAndFilteredJobs = useMemo(() => {
-    const filtered = jobs.filter((job) => {
+    const filtered = jobsWithMatch.filter((job) => {
       if (job.status === 'paused') return false;
       if (searchText && !job.title.includes(searchText) && !job.storeName.includes(searchText)) {
         return false;
@@ -132,11 +132,13 @@ const JobsPage: React.FC = () => {
       case 'newest':
         sorted.sort((a, b) => (b.publishedAtValue || 0) - (a.publishedAtValue || 0));
         break;
+      case 'default':
       default:
+        sorted.sort((a, b) => (b.matchScore || 0) - (a.matchScore || 0));
         break;
     }
     return sorted;
-  }, [jobs, searchText, activeFilters, activeTags, sortBy]);
+  }, [jobsWithMatch, searchText, activeFilters, activeTags, sortBy]);
 
   usePullDownRefresh(() => {
     setTimeout(() => {

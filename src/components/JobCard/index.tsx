@@ -14,15 +14,20 @@ interface JobCardProps {
 
 const JobCard: React.FC<JobCardProps> = ({ job, onFavorite }) => {
   const handleTap = () => {
-    console.log('[JobCard] 点击职位:', job.id);
     Taro.navigateTo({ url: `/pages/job-detail/index?id=${job.id}` });
   };
 
   const handleFavorite = (e: any) => {
     e.stopPropagation?.();
-    console.log('[JobCard] 收藏/取消收藏:', job.id);
     onFavorite?.(job.id);
   };
+
+  const matchColor =
+    job.matchScore && job.matchScore >= 80
+      ? '#00B42A'
+      : job.matchScore && job.matchScore >= 60
+      ? '#FF7D00'
+      : '#86909C';
 
   return (
     <View className={styles.jobCard} onClick={handleTap}>
@@ -41,7 +46,14 @@ const JobCard: React.FC<JobCardProps> = ({ job, onFavorite }) => {
         </View>
       </View>
 
-      <View className={styles.jobCardSalary}>{job.salary}元/月</View>
+      <View style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <View className={styles.jobCardSalary}>{job.salary}元/月</View>
+        {typeof job.matchScore === 'number' && (
+          <View className={styles.jobCardMatch} style={{ color: matchColor }}>
+            匹配度 {job.matchScore}%
+          </View>
+        )}
+      </View>
 
       <View className={styles.jobCardMeta}>
         <View className={styles.jobCardMetaItem}>📍 {job.distance}</View>
@@ -60,6 +72,11 @@ const JobCard: React.FC<JobCardProps> = ({ job, onFavorite }) => {
             style={{ color: '#00B42A' }}
           >
             🏠 包住
+          </View>
+        )}
+        {job.status === 'paused' && (
+          <View className={styles.jobCardMetaItem} style={{ color: '#F53F3F' }}>
+            已暂停
           </View>
         )}
       </View>

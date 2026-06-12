@@ -176,3 +176,11 @@
   font-weight: $font-weight-semibold;
   box-shadow: 0 4rpx 16rpx rgba(255, 107, 53, 0.3);
 }
+
+.bottomBarBtnDisabled {
+  background: #C9CDD4 !important;
+  color: #fff !important;
+  box-shadow: none !important;
+  opacity: 0.8;
+  cursor: not-allowed;
+}

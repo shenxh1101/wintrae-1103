@@ -6,6 +6,7 @@ export interface Job {
   salaryMax: number;
   storeName: string;
   storeAvatar: string;
+  storeId: string;
   distance: string;
   distanceValue: number;
   shift: string;
@@ -23,6 +24,8 @@ export interface Job {
   applyCount: number;
   isFavorite: boolean;
   status: 'active' | 'paused';
+  matchScore?: number;
+  matchReasons?: string[];
 }
 
 export type ApplicationStatus =
@@ -31,6 +34,9 @@ export type ApplicationStatus =
   | 'interview'
   | 'hired'
   | 'rejected';
+
+export type InterviewMethod = 'onsite' | 'phone' | 'video';
+export type InterviewResult = 'pending' | 'accepted' | 'rejected';
 
 export interface TimelineEntry {
   status: ApplicationStatus;
@@ -46,6 +52,8 @@ export interface Application {
   appliedAt: string;
   viewedAt?: string;
   interviewAt?: string;
+  interviewMethod?: InterviewMethod;
+  interviewResult?: InterviewResult;
   hiredAt?: string;
   rejectedAt?: string;
   rejectedReason?: string;
@@ -65,6 +73,12 @@ export interface Message {
   unread: number;
   storeId?: string;
   storeName?: string;
+  applicationId?: string;
+  interviewInfo?: {
+    method: InterviewMethod;
+    time: string;
+    result?: InterviewResult;
+  };
 }
 
 export interface ChatMessage {
@@ -76,6 +90,11 @@ export interface ChatMessage {
   type: 'text' | 'image' | 'voice' | 'video' | 'interview';
   time: string;
   isMine: boolean;
+  interviewInfo?: {
+    method: InterviewMethod;
+    time: string;
+    result?: InterviewResult;
+  };
 }
 
 export interface Candidate {

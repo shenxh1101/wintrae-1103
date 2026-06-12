@@ -17,7 +17,7 @@ const tabs = [
 ];
 
 const ProgressPage: React.FC = () => {
-  const { applications } = useApp();
+  const { applications, respondInterview } = useApp();
   const [activeTab, setActiveTab] = useState<string>('all');
 
   const stats = useMemo(() => {
@@ -98,7 +98,17 @@ const ProgressPage: React.FC = () => {
       <ScrollView scrollY className={styles.appList}>
         {filteredApplications.length > 0 ? (
           filteredApplications.map((app) => (
-            <ApplicationItem key={app.id} application={app} />
+            <ApplicationItem
+              key={app.id}
+              application={app}
+              onRespondInterview={(accepted) => {
+                respondInterview(app.id, accepted ? 'accepted' : 'rejected');
+                Taro.showToast({
+                  title: accepted ? '已接受面试' : '已婉拒',
+                  icon: 'success',
+                });
+              }}
+            />
           ))
         ) : (
           <EmptyState

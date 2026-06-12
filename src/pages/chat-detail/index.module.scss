@@ -7,63 +7,64 @@
   background: $color-bg-page;
 }
 
-.chatHeader {
+.header {
   display: flex;
   align-items: center;
-  justify-content: space-between;
   padding: $spacing-md $spacing-lg;
   background: $color-bg-card;
   border-bottom: 1rpx solid $color-divider;
 }
 
-.chatHeaderHeaderInfo {
-  display: flex;
-  align-items: center;
-}
-
-.chatHeaderHeaderName {
-  font-size: $font-size-lg;
-  font-weight: $font-weight-semibold;
-  color: $color-text-primary;
+.headerStoreInfo {
+  flex: 1;
   margin-left: $spacing-md;
 }
 
-.chatHeaderHeaderActions {
-  display: flex;
-  gap: $spacing-md;
+.headerStoreName {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
 }
 
-.chatHeaderHeaderAction {
-  width: 64rpx;
-  height: 64rpx;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: $color-bg-hover;
-  border-radius: $radius-round;
-  font-size: 28rpx;
+.headerStoreStatus {
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+  margin-top: 4rpx;
 }
 
-.chatContent {
+.chatList {
   flex: 1;
   padding: $spacing-lg $page-padding;
-  overflow-y: auto;
 }
 
-.messageWrap {
+.chatListSystemNotice {
+  text-align: center;
+  padding: $spacing-sm $spacing-lg;
+  margin: 0 auto $spacing-lg;
+  background: rgba(0, 0, 0, 0.06);
+  color: $color-text-tertiary;
+  font-size: $font-size-xs;
+  border-radius: $radius-md;
+  display: inline-block;
+  position: relative;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.chatListChatItem {
   display: flex;
   margin-bottom: $spacing-lg;
-
-  &-mine {
-    flex-direction: row-reverse;
-  }
 }
 
-.messageWrapAvatar {
-  flex-shrink: 0;
+.chatListChatItemMe {
+  flex-direction: row-reverse;
 }
 
-.messageWrapBubble {
+.chatListChatItemOther {
+  flex-direction: row;
+}
+
+.chatListMessage {
   max-width: 70%;
   margin: 0 $spacing-md;
   padding: $spacing-md $spacing-lg;
@@ -71,25 +72,74 @@
   font-size: $font-size-md;
   line-height: 1.6;
   word-break: break-all;
-}
-
-.messageWrapBubbleOther {
   background: $color-bg-card;
-  color: $color-text-primary;
-  border-top-left-radius: $radius-xs;
+  position: relative;
 }
 
-.messageWrapBubbleMine {
+.chatListChatItemMe .chatListMessage {
   background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
   color: $color-text-white;
   border-top-right-radius: $radius-xs;
 }
 
-.messageWrapTime {
-  text-align: center;
-  font-size: $font-size-xs;
+.chatListChatItemOther .chatListMessage {
+  background: $color-bg-card;
+  color: $color-text-primary;
+  border-top-left-radius: $radius-xs;
+}
+
+.chatListMessageText {
+  font-size: $font-size-md;
+  line-height: 1.6;
+}
+
+.chatListMessageTime {
+  font-size: 20rpx;
   color: $color-text-tertiary;
-  margin: $spacing-md 0;
+  opacity: 0.7;
+  margin-top: 8rpx;
+  display: block;
+}
+
+.chatListMessageTimeRight {
+  text-align: right;
+}
+
+.chatListInterviewMsg {
+  background: transparent !important;
+  padding: 0 !important;
+}
+
+.chatListInterviewCard {
+  background: #fff;
+  border-radius: 16rpx;
+  padding: 24rpx;
+  border: 2rpx solid #E9EEFB;
+  min-width: 400rpx;
+}
+
+.chatListInterviewAcceptBtn {
+  flex: 1;
+  height: 64rpx;
+  line-height: 64rpx;
+  text-align: center;
+  background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
+  color: #fff;
+  border-radius: 32rpx;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-semibold;
+}
+
+.chatListInterviewRejectBtn {
+  flex: 1;
+  height: 64rpx;
+  line-height: 64rpx;
+  text-align: center;
+  background: #F2F3F5;
+  color: $color-text-secondary;
+  border-radius: 32rpx;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
 }
 
 .quickReplies {
@@ -101,7 +151,7 @@
   white-space: nowrap;
 }
 
-.quickRepliesQuickItem {
+.quickRepliesQuickReply {
   display: inline-flex;
   align-items: center;
   padding: 12rpx 24rpx;
@@ -124,95 +174,41 @@
   gap: $spacing-sm;
 }
 
-.inputBarInputWrap {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  background: $color-bg-hover;
-  border-radius: $radius-button;
-  padding: 0 $spacing-lg;
-  height: $button-height-md;
-}
-
-.inputBarInput {
-  flex: 1;
-  font-size: $font-size-md;
-  color: $color-text-primary;
-  border: none;
-  background: transparent;
-  outline: none;
-}
-
-.inputBarActionBtn {
-  @include button-reset;
+.inputBarAction {
   width: 72rpx;
   height: 72rpx;
   border-radius: $radius-round;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 32rpx;
+  font-size: 36rpx;
   background: $color-bg-hover;
   color: $color-text-secondary;
-  transition: all $transition-fast;
+}
 
-  &:active {
-    opacity: 0.8;
-  }
+.inputBarInput {
+  flex: 1;
+  font-size: $font-size-md;
+  color: $color-text-primary;
+  background: $color-bg-hover;
+  border-radius: $radius-button;
+  padding: 0 $spacing-lg;
+  height: $button-height-md;
 }
 
 .inputBarSendBtn {
-  @include button-reset;
   padding: 0 $spacing-lg;
   height: $button-height-md;
-  background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
-  color: $color-text-white;
   border-radius: $radius-button;
   font-size: $font-size-md;
   font-weight: $font-weight-medium;
-}
-
-.interviewCard {
-  background: $color-primary-bg;
-  border-radius: $radius-md;
-  padding: $spacing-md;
-  margin-top: $spacing-sm;
-}
-
-.interviewCardInterviewTitle {
-  font-size: $font-size-sm;
-  font-weight: $font-weight-semibold;
-  color: $color-primary;
-  margin-bottom: 8rpx;
-}
-
-.interviewCardInterviewInfo {
-  font-size: $font-size-xs;
-  color: $color-text-secondary;
-}
-
-.interviewCardInterviewActions {
+  background: #C9CDD4;
+  color: #fff;
   display: flex;
-  gap: $spacing-sm;
-  margin-top: $spacing-md;
+  align-items: center;
+  justify-content: center;
 }
 
-.interviewCardInterviewBtn {
-  @include button-reset;
-  flex: 1;
-  height: 56rpx;
-  border-radius: $radius-button;
-  font-size: $font-size-xs;
-  font-weight: $font-weight-medium;
-}
-
-.interviewCardInterviewBtnAccept {
-  background: $color-primary;
-  color: $color-text-white;
-}
-
-.interviewCardInterviewBtnReject {
-  background: $color-bg-card;
-  color: $color-text-secondary;
-  border: 1rpx solid $color-border;
+.inputBarSendBtnActive {
+  background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
 }

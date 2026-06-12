@@ -149,3 +149,42 @@
     white-space: nowrap;
   }
 }
+
+.applicationItemAcceptBtn {
+  padding: 12rpx 28rpx;
+  background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
+  color: #fff;
+  border-radius: 32rpx;
+  font-size: 24rpx;
+  font-weight: $font-weight-semibold;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.applicationItemRejectBtn {
+  padding: 12rpx 28rpx;
+  background: #F2F3F5;
+  color: $color-text-secondary;
+  border-radius: 32rpx;
+  font-size: 24rpx;
+  font-weight: $font-weight-medium;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.applicationItemChatBtn {
+  padding: 12rpx 28rpx;
+  background: $color-primary-bg;
+  color: $color-primary;
+  border-radius: 32rpx;
+  font-size: 24rpx;
+  font-weight: $font-weight-medium;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}

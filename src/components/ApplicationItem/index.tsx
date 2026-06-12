@@ -1,14 +1,17 @@
 import React from 'react';
 import { View, Text } from '@tarojs/components';
+import Taro from '@tarojs/taro';
 import StatusTag from '@/components/StatusTag';
 import type { Application, TimelineEntry } from '@/types';
 import { statusLabels } from '@/data/applications';
+import { methodLabelMap } from '@/store/AppContext';
 import styles from './index.module.scss';
 import classnames from 'classnames';
 
 interface ApplicationItemProps {
   application: Application;
   onClick?: () => void;
+  onRespondInterview?: (accepted: boolean) => void;
 }
 
 const statusColorMap: Record<string, string> = {
@@ -22,9 +25,17 @@ const statusColorMap: Record<string, string> = {
 const ApplicationItem: React.FC<ApplicationItemProps> = ({
   application,
   onClick,
+  onRespondInterview,
 }) => {
   const currentStatus = application.status;
   const statusLabel = statusLabels[currentStatus];
+
+  const handleChat = (e: any) => {
+    e.stopPropagation?.();
+    Taro.navigateTo({
+      url: `/pages/chat-detail/index?id=${application.job.storeId}&name=${encodeURIComponent(application.job.storeName)}&storeId=${application.job.storeId}&applicationId=${application.id}`,
+    });
+  };
 
   const renderTimeline = () => {
     const entries: TimelineEntry[] = application.timeline || [];
@@ -62,6 +73,72 @@ const ApplicationItem: React.FC<ApplicationItemProps> = ({
             </View>
           );
         })}
+
+        {currentStatus === 'interview' && application.interviewAt && application.interviewMethod && (
+          <View className={styles.applicationItemTimelineItem}>
+            <View className={styles.applicationItemTimelineDotWrap}>
+              <View
+                className={classnames(
+                  styles.applicationItemTimelineDot,
+                  styles.applicationItemTimelineDotCurrent
+                )}
+                style={{ background: '#722ED1' }}
+              />
+            </View>
+            <View className={styles.applicationItemTimelineContent} style={{ flex: 1 }}>
+              <View
+                className={styles.applicationItemTimelineTitle}
+                style={{ color: '#722ED1' }}
+              >
+                📅 面试邀约：{methodLabelMap[application.interviewMethod]}
+              </View>
+              <View className={styles.applicationItemTimelineTime}>
+                {application.interviewAt}
+              </View>
+              {!application.interviewResult && (
+                <View style={{ display: 'flex', gap: 16, marginTop: 16 }}>
+                  <View
+                    className={styles.applicationItemRejectBtn}
+                    onClick={(e) => {
+                      e.stopPropagation?.();
+                      onRespondInterview?.(false);
+                    }}
+                  >
+                    婉拒
+                  </View>
+                  <View
+                    className={styles.applicationItemAcceptBtn}
+                    onClick={(e) => {
+                      e.stopPropagation?.();
+                      onRespondInterview?.(true);
+                    }}
+                  >
+                    接受
+                  </View>
+                  <View
+                    className={styles.applicationItemChatBtn}
+                    onClick={handleChat}
+                  >
+                    沟通
+                  </View>
+                </View>
+              )}
+              {application.interviewResult && (
+                <Text
+                  style={{
+                    marginTop: 12,
+                    display: 'block',
+                    fontSize: 26,
+                    color: application.interviewResult === 'accepted' ? '#00B42A' : '#F53F3F',
+                    fontWeight: 500,
+                  }}
+                >
+                  {application.interviewResult === 'accepted' ? '✓ 已接受面试' : '✗ 已婉拒面试'}
+                </Text>
+              )}
+            </View>
+          </View>
+        )}
 
         {application.hasTrial && application.trialAt && (
           <View className={styles.applicationItemTimelineItem}>
